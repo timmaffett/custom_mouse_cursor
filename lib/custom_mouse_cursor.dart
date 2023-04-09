@@ -11,7 +11,6 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-
 import 'package:crypto/crypto.dart';
 
 //WIN32//import 'package:win32/win32.dart';
@@ -127,7 +126,8 @@ class CustomMouseCursor extends MouseCursor {
   final Map<double, String> _dprCSSCursorCache = {};
 
   /// Cache of all the created custom cursors
-  static final Map<String, CustomMouseCursor> _cursorCacheOfAllCreatedCursors = {};
+  static final Map<String, CustomMouseCursor> _cursorCacheOfAllCreatedCursors =
+      {};
 
   CustomMouseCursor._(
       this._key,
@@ -669,6 +669,8 @@ class CustomMouseCursor extends MouseCursor {
       late final String registeredKey;
       if (!kIsWeb) {
         /*
+        // This was experiment on WIndows so see if we could get the OS SetThreadCursorCreationScaling()
+        // function to work for automatically scaling cursor for DPR - did not work
         //WIN32//
         UISettings uisettings = UISettings();
         final cursorSize = uisettings.cursorSize;
@@ -751,7 +753,8 @@ class CustomMouseCursor extends MouseCursor {
   /// Returns true if this cursor object is still valid and it's platform backing
   /// cursor has not been deleted.  For web it always returns true as the
   /// cursor's key is the platform definition.
-  bool get isValid => kIsWeb || _cursorCacheOfAllCreatedCursors.containsKey(key);
+  bool get isValid =>
+      kIsWeb || _cursorCacheOfAllCreatedCursors.containsKey(key);
 
   /// For cursors that have a backing platform cursor this frees that cursor and
   /// removes this cursor from the [_cursorCacheOfAllCreatedCursors].
@@ -853,7 +856,8 @@ class CustomMouseCursor extends MouseCursor {
             cursor._assetBundleImageProvider = AssetImage(assetName);
 
             //KLUDGE do we ever use this cursor.currentAssetAwareKey?????
-            cursor._currentAssetAwareKey = await cursor._assetBundleImageProvider!
+            cursor._currentAssetAwareKey = await cursor
+                ._assetBundleImageProvider!
                 .obtainKey(_lastImageConfiguration!);
           }
           if (cursor._assetBundleImageProvider != null &&
@@ -1029,7 +1033,7 @@ class _CustomMouseCursorSession extends MouseCursorSession {
   void dispose() {}
 }
 
-/// The cursor manager
+/// The platform interface either the flutter engine (windows) or our platform plugin channels for macOS and linux
 class _CustomMouseCursorPlatformInterface {
   static const channel = SystemChannels.mouseCursor;
   static const createCursorKey = "createCustomCursor";
@@ -1087,19 +1091,23 @@ class _CustomMouseCursorPlatformInterface {
   }
 }
 
+// todo: tmm  create a random unique id and not include crypto or take time to do md5
 String generateMd5(Uint8List input) {
   return md5.convert(input).toString();
 }
 
+/// Returns Uint8List of the ui.Image's pixels in BGRA format
 Future<Uint8List> _getBytesAsBGRAFromImage(ui.Image image) async {
   int width = image.width;
   int height = image.height;
   final rgbaBD = await image.toByteData(format: ImageByteFormat.rawRgba);
   final rgba = rgbaBD?.buffer.asUint8List();
-  return _getBytesAsBGRA(rgba!, width, height);
+  return _getRGBABytesAsBGRA(rgba!, width, height);
 }
 
-Uint8List _getBytesAsBGRA(Uint8List rgba, int width, int height) {
+/// Convert RGBA formmated Uint8List into BGRA format.
+/// (This format is needed for creating cursors on windows platform)
+Uint8List _getRGBABytesAsBGRA(Uint8List rgba, int width, int height) {
   final length = width * height * 4;
   assert(rgba.lengthInBytes == length && rgba.lengthInBytes % 4 == 0);
   final bgra = Uint8List(length);
@@ -1112,7 +1120,8 @@ Uint8List _getBytesAsBGRA(Uint8List rgba, int width, int height) {
   return bgra;
 }
 
-/// Creates am image with the passed shader of the requested size
+/// Creates am image from the specified icon.  This is essentially identical parameters
+/// to the Icon() flutter widget but creates a ui.Image instead.
 ui.Image _createImageFromIconSync(IconData icon,
     {double size = 32,
     Color color = Colors.black,
