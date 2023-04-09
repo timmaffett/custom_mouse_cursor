@@ -1,0 +1,47 @@
+name: custom_mouse_cursor_example
+description: Demonstrates use of the custom_mouse_cursor package.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  custom_mouse_cursor:
+    path: ../
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+  image: ^3.2.2
+  signature: ^5.3.0
+  material_symbols_icons: ^4.39.3
+  google_fonts: ^4.0.3
+
+# Following is for testing web on local engine
+dependency_overrides:
+  sky_engine:
+    path: ../../build_flutter/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/cursors/
