@@ -26,10 +26,10 @@ I have submitted a PR [pr number on engine] that provides support for the web pl
 
 ## Supported Platforms
 
-- [x] Windows
-- [x] macOS
-- [x] Linux
-- [x] Web
+- [x] macOS (works with current flutter `stable` channel or `master`)
+- [x] Linux (works with current flutter `stable` channel or `master`)
+- [x] Windows (requires the flutter `master` channel)*
+- [x] Web (requires flutter engine PR #xyz, hopefully `master` channel soon)*
 
 * As of 4/9/23 Windows support requires the master channel (until [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) lands in stable).
 * As of 4/9/23 Web support requires custom engine with [flutter engine PR#xxxx](https://github.com/flutter/engine/pull/36143) lands in the master channel.
