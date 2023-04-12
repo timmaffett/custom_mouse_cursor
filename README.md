@@ -1,10 +1,14 @@
 # custom_mouse_cursor
 
 ![](https://img.shields.io/pub/v/custom_mouse_cursor?color=green)
-![](https://img.shields.io/pub/publisher/custom_mouse_cursor)
+![Publisher: hiveright.tech](https://img.shields.io/pub/publisher/custom_mouse_cursor)
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 This package provides simple custom mouse cursor support for Flutter.  The custom mouse cursors are devicePixelRatio aware so they will remanin the proper size on different devicePixelRatio's and on machines with multiple monitors with varying devicePixelRatios.  Simply create [CustomMouseCursor]()'s objects and use them
 int the same way you would use [SystemMouseCursors](). 
+
+
+<img src="https://github.com/timmaffett/custom_mouse_cursor/raw/master/example_app_windowcapture_01.png" width="100%">
 
 CustomMouseCursor's can be created directly from any flutter image asset as well as flutter icons (just as you would with Flutter Icon).
 For power users Flutter's ui.Image objects can also be used (allowing for anything you might dream up, even animated cursor's).
