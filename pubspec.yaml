@@ -11,6 +11,7 @@ environment:
   flutter: ">=2.5.0"
 
 dependencies:
+  chalkdart: ^2.0.9
   crypto: ^3.0.2
   flutter:
     sdk: flutter

@@ -6,11 +6,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:chalkdart/chalk.dart';
 
 //NOLONGERUSERMD5//import 'package:crypto/crypto.dart';
 
 class _Logger {
-  static void log(String message) {}
+  static void log(String message) {
+    print(message);
+  }
 }
 
 /// The [CustomMouseCursor] class allows the user to create custom system mouse cursors from various
@@ -367,7 +370,7 @@ class CustomMouseCursor extends MouseCursor {
     //OBSOLETE//final originalUnchangedAssetName = assetName;
     double exactAssetDevicePixelRatio = nativeDevicePixelRatio;
     _Logger.log(
-        '\n.\n:\n;\n,\n${useExactAssetImage ? 'EXACT' : ''}Asset() assetName=$assetName useExactAssetImage=$useExactAssetImage nativeDevicePixelRatio=$nativeDevicePixelRatio existingCursorToUpdate=$existingCursorToUpdate');
+        chalk.green('\n\n${useExactAssetImage ? 'EXACT' : ''}Asset() assetName=$assetName useExactAssetImage=$useExactAssetImage nativeDevicePixelRatio=$nativeDevicePixelRatio existingCursorToUpdate=$existingCursorToUpdate'));
     // If we have a ImageConfiguration object already from didChangeDependencies() being called
     // use that to use AssetImage to do a DPI aware loading of the pointer
     AssetBundleImageProvider? assetBundleImageProvider;
@@ -519,7 +522,7 @@ class CustomMouseCursor extends MouseCursor {
         originStory != _CustomMouseCursorCreationType.exactasset) {
       throw ('\n!\n_updateAssetToNewDpi() called on non asset cursor (${originStory} key=$key)');
     }
-
+    _Logger.log(chalk.brightGreen('ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) ')); 
     bool useExactAssetImage =
         (originStory == _CustomMouseCursorCreationType.exactasset);
     //OLDWAY//AssetBundleImageProvider? assetBundleImageProvider;
@@ -764,7 +767,7 @@ class CustomMouseCursor extends MouseCursor {
             WidgetsBinding.instance.window.devicePixelRatio;
     if (currentDevicePixelRatio != 1.0 /*nativeDevicePixelRatio*/) {
       _Logger.log(
-          '\n.\n;\n,\nEntering ICON creation currentDevicePixelRatio=$currentDevicePixelRatio');
+          chalk.color.pink('\n.\n;\n,\nEntering ICON creation currentDevicePixelRatio=$currentDevicePixelRatio'));
       _Logger.log('  Must adjust size=$size   hotX=$hotX   hotY=$hotY ');
       double adjustRatio =
           currentDevicePixelRatio / 1.0 /*nativeDevicePixelRatio*/;
@@ -814,7 +817,7 @@ class CustomMouseCursor extends MouseCursor {
           (_iconCreationInfo!.hotYInLogicalPixels * scaleRatio).round();
 
       _Logger.log(
-          '  updateIconToNewDpi() making icon at newSize=$newSize   (scaleRatio=$scaleRatio)');
+          chalk.cyan('  updateIconToNewDpi() making icon at newSize=$newSize   (scaleRatio=$scaleRatio)'));
 
       ui.Image iconImage = _createImageFromIconSync(_iconCreationInfo!.icon,
           size: newSize,
@@ -859,7 +862,7 @@ class CustomMouseCursor extends MouseCursor {
     CustomMouseCursor? existingCursorToUpdate,
   }) async {
     _Logger.log(
-        'ENTERING image() with existingCursorToUpdate=$existingCursorToUpdate');
+        chalk.brightWhite('ENTERING image() with existingCursorToUpdate=$existingCursorToUpdate'));
     // KLUDGE - maybe not best place but ensure we have callbacks to detect DevicePixelRatio changes
     _setupViewsOnMetricChangedCallbacks();
 
@@ -1058,7 +1061,7 @@ class CustomMouseCursor extends MouseCursor {
       double nativeDevicePixelRatio,
       Map<double, _CustomMouseCursorDPRBitmapCache>? dprBitmapCache) {
     _Logger.log(
-        'Enteted createCursorCSSDefinition() and nativeDevicePixelRatio=$nativeDevicePixelRatio  dprBitmapCache=$dprBitmapCache');
+        chalk.bgYellow('Enteted createCursorCSSDefinition() and nativeDevicePixelRatio=$nativeDevicePixelRatio  dprBitmapCache=$dprBitmapCache'));
 
     //TRACKINGDEBUG//base64ImageDataUri='  ADDING DPR=$nativeDevicePixelRatio ';
 
@@ -1208,11 +1211,11 @@ class CustomMouseCursor extends MouseCursor {
   /// This is called from our onMetricsChanged() hook or by user themselves (typically from their
   /// root widget's didChangeDependencies() handler.
   static void ensurePointersMatchDevicePixelRatio(BuildContext? context) async {
-    _Logger.log('ENTERED ensurePointersMatchDevicePixelRatio()');
+    _Logger.log(chalk.color.hotpink('ENTERED ensurePointersMatchDevicePixelRatio()'));
     double devicePixelRatio = _getDevicePixelRatioFromView();
     if (devicePixelRatio == _lastEnsuredDevicePixelRatio) {
       _Logger.log(
-          '  lastEnsuredDevicePixelRatio IMMEDIATE RETURN already $_lastEnsuredDevicePixelRatio');
+          chalk.brightBlue('  lastEnsuredDevicePixelRatio IMMEDIATE RETURN already $_lastEnsuredDevicePixelRatio'));
       return;
     }
 
@@ -1393,7 +1396,7 @@ class CustomMouseCursor extends MouseCursor {
     }
 
     _Logger.log(
-        'getDevicePixelRatioFromView() called    :  usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged');
+        chalk.color.orange('getDevicePixelRatioFromView() called    :  usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
     if (_usePlatformDipatcherOnMetricsChanged) {
       _lastDevicePixelRatio =
           PlatformDispatcher.instance.implicitView!.devicePixelRatio;
@@ -1429,7 +1432,7 @@ class CustomMouseCursor extends MouseCursor {
     if (!_onMetricChangedCallbackSet && !_noOnMetricsChangedHook) {
       _onMetricChangedCallbackSet = true;
       _Logger.log(
-          'setupViewsOnMetricChangedCallbacks() called and BEING SET UP usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged');
+          chalk.color.cornflowerblue('setupViewsOnMetricChangedCallbacks() called and BEING SET UP usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
       if (_usePlatformDipatcherOnMetricsChanged) {
         // Just use platformDispatcher instance
         WidgetsBinding.instance.platformDispatcher.onMetricsChanged = () {

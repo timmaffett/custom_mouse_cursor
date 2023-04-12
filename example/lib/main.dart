@@ -5,7 +5,7 @@ import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/sharp.dart';
 import 'package:signature/signature.dart';
-
+import 'package:chalkdart/chalk.dart';
 /*
 
 // Some of these api entry points require my custom version of the Win32 package
@@ -174,13 +174,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeMetrics() {
-    print('WIDGETS onChangeMetrics() callback called!!!!');
+    print(chalk.brightYellow('WIDGETS onChangeMetrics() callback called!!!!'));
     setState(() {
       double prevDPR = _lastDevicePixelRatio;
       _lastSize = WidgetsBinding.instance.window.physicalSize;
       _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
       print(
-          'in didChangeMetrics() Window size is $_lastSize  prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio');
+          chalk.yellow('setState() in didChangeMetrics() Window size is $_lastSize  prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
 
       CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
     });
@@ -189,13 +189,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('WIDGETS didChangeDependencies() callback called!!!!');
+    print(chalk.yellow('WIDGETS didChangeDependencies() callback called!!!!'));
 
     double prevDPR = _lastDevicePixelRatio;
     _lastSize = WidgetsBinding.instance.window.physicalSize;
     _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
     print(
-        'in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio');
+        chalk.yellow('in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
 
     CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
   }
@@ -211,14 +211,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    print('MyApp initState() called');
+    print(chalk.brightRed('MyApp initState() called'));
     super.initState();
 
     _lastSize = WidgetsBinding.instance.window.physicalSize;
     _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
 
     print(
-        'Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio');
+        chalk.red('Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
     WidgetsBinding.instance.addObserver(this);
 
     // Initialise a controller. It will contains signature points, stroke width and pen color.
