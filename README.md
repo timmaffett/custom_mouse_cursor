@@ -8,7 +8,7 @@ This package provides simple custom mouse cursor support for Flutter.  The custo
 int the same way you would use [SystemMouseCursors](). 
 
 
-<img src="https://github.com/timmaffett/custom_mouse_cursor/raw/master/example_app_windowcapture_01.png" width="100%">
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_app_windowcapture_01.png" width="100%">
 
 CustomMouseCursor's can be created directly from any flutter image asset as well as flutter icons (just as you would with Flutter Icon).
 For power users Flutter's ui.Image objects can also be used (allowing for anything you might dream up, even animated cursor's).
