@@ -1,20 +1,10 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'dart:ui';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/services.dart';
-
 import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
-
-// IMPORT PACKAGE
-import 'package:signature/signature.dart';
-import 'package:material_symbols_icons/sharp.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_symbols_icons/sharp.dart';
+import 'package:signature/signature.dart';
 
 /*
 
@@ -78,6 +68,10 @@ Future<void> initializeCursors() async {
   print("Creating cursor from asset and from icon");
   //final byte = await rootBundle.load("assets/cursors/mouse.png");
 
+  CustomMouseCursor.useWebKitImageSet = true;
+  //CustomMouseCursor.useOnlyImageSetCSS = true;
+  //CustomMouseCursor.useOnlyURLDataURICursorCSS = true;
+
   // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x
   assetCursor = await CustomMouseCursor.asset(
       "assets/cursors/startrek_mousepointer.png",
@@ -99,8 +93,8 @@ Future<void> initializeCursors() async {
   List<Shadow> shadows = [
     const BoxShadow(
       color: Color.fromRGBO(0, 0, 0, 0.8),
-      offset: Offset(2, 2),
-      blurRadius: 2,
+      offset: Offset(4, 3),
+      blurRadius: 3,
       spreadRadius: 2,
     ),
   ];
@@ -113,12 +107,12 @@ Future<void> initializeCursors() async {
 
   msIconCursor = await CustomMouseCursor.icon(
       MaterialSymbols.arrow_selector_tool,
-      size: 64,
-      hotX: 16,
-      hotY: 4,
-      nativeDevicePixelRatio: 2.0,
+      size: 32,
+      hotX: 8,
+      hotY: 2,
       fill: 1,
-      color: Colors.blueAccent);
+      color: Colors.blueAccent,
+      shadows: shadows);
 
   assetCursorSingleSize = await CustomMouseCursor.exactAsset(
       "assets/cursors/example_game_cursor_64x64.png",
@@ -159,13 +153,6 @@ void main() async {
 
   //called immediately// CustomMouseCursor.disposeAll();
 }
-
-/*
-Future<img2.Image> getImage(Uint8List bytes) async {
-  img = img2.decodePng(bytes)!;
-  return img;
-}
-*/
 
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -268,7 +255,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('CustomMouseCursor Example and Interactive Test App'),
+          title: RichText(
+            text: TextSpan(
+              text: 'CustomMouseCursor Example and Interactive Test App',
+              style:
+                  TextStyle(fontSize: 20), //DefaultTextStyle.of(context).style,
+              children: const <TextSpan>[
+                TextSpan(
+                    text:
+                        '\n        (move window to monitor with different devicePixelRatio to support for test varying DPR)',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
+              ],
+            ),
+          ),
         ),
         body: Center(
             child: ListView(
@@ -278,6 +278,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               message: 'Click to Select Asset Cursor',
               note:
                   '(with 1.0x,1.5x,2.0x,2.5x,3.0x,3.5x,4.0x, and 8.0x assets present)',
+              note2: '(should appear as tall as this row)',
               details:
                   'CustomMouseCursor.asset("assets/cursors/startrek_mousepointer.png", hotX:18, hotY:0)',
               color: Colors.indigoAccent,
@@ -300,7 +301,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   '(single 8.0x exactAsset specified) (should be identical to above)',
               details:
                   'CustomMouseCursor.exactAsset("assets/cursors/star-trek-mouse-pointer-cursor292x512.png", hotX: 144, hotY: 0, nativeDevicePixelRatio: 8.0);',
-              color: ui.Color.fromARGB(255, 26, 133, 172),
+              color: const ui.Color.fromARGB(255, 26, 133, 172),
               selectCursorCallback: selectCursorCallback,
             ),
             CursorTesterSelectorRegion(
@@ -314,9 +315,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             CursorTesterSelectorRegion(
               msIconCursor,
               message: 'Click to Select Material Symbols Icon Cursor',
-              note: '(specified with 2.0x DPR size/hot spot coords)',
+              note: '(using material_symbols_icons package)',
               details:
-                  'CustomMouseCursor.icon( MaterialSymbols.arrow_selector_tool, size: 64, hotX: 12, hotY: 8, nativeDevicePixelRatio: 2.0, fill: 1, color: Colors.blueAccent )',
+                  'CustomMouseCursor.icon( MaterialSymbols.arrow_selector_tool, size: 32, hotX: 8, hotY: 2, fill: 1, color: Colors.blueAccent )',
               color: Colors.yellow,
               selectCursorCallback: selectCursorCallback,
             ),
@@ -359,14 +360,15 @@ class CursorTesterSelectorRegion extends StatelessWidget {
   final SelectCursorCallback? selectCursorCallback;
   final String message;
   final String? note;
+  final String? note2;
   final String? details;
   final CustomMouseCursor cursor;
 
   const CursorTesterSelectorRegion(this.cursor,
-      {
-      super.key,
+      {super.key,
       required this.message,
       this.note,
+      this.note2,
       this.details,
       this.color = Colors.white,
       this.selectCursorCallback});
@@ -406,6 +408,13 @@ class CursorTesterSelectorRegion extends StatelessWidget {
                             fontSize: 16,
                             fontStyle: FontStyle.italic,
                           )),
+                    if (note2 != null) const SizedBox(width: 10),
+                    if (note2 != null)
+                      Text(note2!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          )),
                   ]),
               if (details != null)
                 Container(
@@ -415,11 +424,10 @@ class CursorTesterSelectorRegion extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(7),
-                    child: Text(
-                      details!,
-                      style: //TextStyle(fontSize: 16, backgroundColor: Colors.grey), 
-                          GoogleFonts.jetBrainsMono(fontSize: 12, backgroundColor:Colors.grey)
-                    ),
+                    child: Text(details!,
+                        style: //TextStyle(fontSize: 16, backgroundColor: Colors.grey),
+                            GoogleFonts.jetBrainsMono(
+                                fontSize: 12, backgroundColor: Colors.grey)),
                   ),
                 ),
               const SizedBox(height: 8),
@@ -430,3 +438,10 @@ class CursorTesterSelectorRegion extends StatelessWidget {
     );
   }
 }
+
+/*
+Future<img2.Image> getImage(Uint8List bytes) async {
+  img = img2.decodePng(bytes)!;
+  return img;
+}
+*/
