@@ -41,3 +41,75 @@ Note: Currently, the api required by this plugin on Windows is included in flutt
 
 ## Example use
 
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor1.png" width="100%">
+
+```DART
+  // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x
+  assetCursor = await CustomMouseCursor.asset(
+      "assets/cursors/startrek_mousepointer.png",
+      hotX: 18,
+      hotY: 0);
+```
+
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor2.png" width="100%">
+
+```dart
+  // Example of image asset that has obly device pixel ratio versions (1.0x ands 2.5x)
+  assetCursor = await CustomMouseCursor.asset(
+      "assets/cursors/startrek_mousepointer.png",
+      hotX: 18,
+      hotY: 0);
+
+```
+
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor3.png" width="100%">
+
+```dart
+  assetCursorOnly25 = await CustomMouseCursor.asset(
+      "assets/cursors/startrek_mousepointer25Only.png",
+      hotX: 18,
+      hotY: 0);
+```
+
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor4.png" width="100%">
+
+```dart
+  List<Shadow> shadows = [
+    const BoxShadow(
+      color: Color.fromRGBO(0, 0, 0, 0.8),
+      offset: Offset(4, 3),
+      blurRadius: 3,
+      spreadRadius: 2,
+    ),
+  ];
+  iconCursor = await CustomMouseCursor.icon(Icons.redo,
+      size: 24, //48,
+      hotX: 22, //48,
+      hotY: 17, //33,
+      color: Colors.pinkAccent,
+      shadows: shadows);
+```
+
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor5.png" width="100%">
+
+```dart
+  msIconCursor = await CustomMouseCursor.icon(
+      MaterialSymbols.arrow_selector_tool,
+      size: 32,
+      hotX: 8,
+      hotY: 2,
+      fill: 1,
+      color: Colors.blueAccent,
+      shadows: shadows);
+```
+
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor6.png" width="100%">
+
+```DART
+  assetCursorSingleSize = await CustomMouseCursor.exactAsset(
+      "assets/cursors/example_game_cursor_64x64.png",
+      hotX: 2,
+      hotY: 2,
+      nativeDevicePixelRatio: 2.0);
+```
+
