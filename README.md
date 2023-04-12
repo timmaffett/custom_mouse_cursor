@@ -7,6 +7,10 @@
 This package provides simple custom mouse cursor support for Flutter.  The custom mouse cursors are devicePixelRatio aware so they will remanin the proper size on different devicePixelRatio's and on machines with multiple monitors with varying devicePixelRatios.  Simply create [CustomMouseCursor]()'s objects and use them
 int the same way you would use [SystemMouseCursors](). 
 
+## A [LIVE flutter web example can be found here](https://timmaffett.github.io/custom_mouse_cursor/#/)
+The [live example](https://timmaffett.github.io/custom_mouse_cursor/#/) was been compiled with a local version of the engine with PR#xyz.
+
+
 
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_app_windowcapture_01.png" width="100%">
 
