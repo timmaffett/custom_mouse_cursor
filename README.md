@@ -41,7 +41,11 @@ Note: Currently, the api required by this plugin on Windows is included in flutt
 
 ## Example use
 Each example shows excerpt from example app with the the cursor the example code created showing on the left side of the image.
+The `CustomMouseCursor` cursor objects are used exactly as you would any `SystemMouseCursors.xxxx` cursor.
+Custom mouse cursors are can be created from asset images or icons.
 
+`CustomMouseCursor.asset()` and `CustomMouseCursor.exactasset()` are used to create custom cursors from asset images.
+`CustomMouseCursor.icon()` is used to create custom cursor from any IconData object (just as you would a regular `Icon` widget in flutter).
 
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor1.png" width="100%">
 
@@ -67,10 +71,12 @@ Each example shows excerpt from example app with the the cursor the example code
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor3.png" width="100%">
 
 ```dart
-  assetCursorOnly25 = await CustomMouseCursor.asset(
-      "assets/cursors/startrek_mousepointer25Only.png",
-      hotX: 18,
-      hotY: 0);
+  // Example of image asset only at 8x native DevicePixelRatio so will get scaled down to most/all encoutered DPR's
+  assetNative8x = await CustomMouseCursor.exactAsset(
+      "assets/cursors/star-trek-mouse-pointer-cursor292x512.png",
+      hotX: 144,
+      hotY: 0,
+      nativeDevicePixelRatio: 8.0);
 ```
 
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor4.png" width="100%">
@@ -84,10 +90,11 @@ Each example shows excerpt from example app with the the cursor the example code
       spreadRadius: 2,
     ),
   ];
-  iconCursor = await CustomMouseCursor.icon(Icons.redo,
-      size: 24, //48,
-      hotX: 22, //48,
-      hotY: 17, //33,
+  iconCursor = await CustomMouseCursor.icon(
+      Icons.redo,
+      size: 24,
+      hotX: 22,
+      hotY: 17,
       color: Colors.pinkAccent,
       shadows: shadows);
 ```

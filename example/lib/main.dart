@@ -99,9 +99,9 @@ Future<void> initializeCursors() async {
     ),
   ];
   iconCursor = await CustomMouseCursor.icon(Icons.redo,
-      size: 24, //48,
-      hotX: 22, //48,
-      hotY: 17, //33,
+      size: 24,
+      hotX: 22,
+      hotY: 17,
       color: Colors.pinkAccent,
       shadows: shadows);
 
@@ -308,7 +308,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               iconCursor,
               message: 'Click to Select Icon Cursor',
               details:
-                  'CustomMouseCursor.icon( Icons.redo,size: 48, hotX:48, hotY:33, color:Colors.red, shadows:shadows)',
+                  'CustomMouseCursor.icon( Icons.redo, size: 24, hotX:22, hotY:17, color:Colors.red, shadows:shadows)',
               color: Colors.green,
               selectCursorCallback: selectCursorCallback,
             ),
