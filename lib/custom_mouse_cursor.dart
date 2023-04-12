@@ -12,7 +12,7 @@ import 'package:chalkdart/chalk.dart';
 
 class _Logger {
   static void log(String message) {
-    print(message);
+    debugPrint(message);
   }
 }
 

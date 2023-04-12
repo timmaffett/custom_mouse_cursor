@@ -6,6 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/sharp.dart';
 import 'package:signature/signature.dart';
 import 'package:chalkdart/chalk.dart';
+
+
+class _Logger {
+  static void log(String message) {
+    debugPrint(message);
+  }
+}
+
 /*
 
 // Some of these api entry points require my custom version of the Win32 package
@@ -20,12 +28,12 @@ void queryWin32() {
   winrt.UISettings uisettings = winrt.UISettings();
   final cursorSize = uisettings.cursorSize;
 
-  print(
+  _Logger.log(
       'uisettings cursorSize.width x height=${cursorSize.Width} x ${cursorSize.Height}');
   final systemDPI = win32.GetDpiForSystem();
-  print('systemDPI = $systemDPI');
+  _Logger.log('systemDPI = $systemDPI');
   final prevDPI = win32.SetThreadCursorCreationScaling(192);
-  print(
+  _Logger.log(
       'called SetThreadCursorCreationScaling( 192 ) and the prev value was $prevDPI');
 
   final DPI_AWARENESS_CONTEXT_UNAWARE =
@@ -39,20 +47,20 @@ void queryWin32() {
   final DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED =
       win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -5);
 
-  print(
+  _Logger.log(
       'DPI_AWARENESS_CONTEXT_UNAWARE                  $DPI_AWARENESS_CONTEXT_UNAWARE             ');
-  print(
+  _Logger.log(
       'DPI_AWARENESS_CONTEXT_SYSTEM_AWARE             $DPI_AWARENESS_CONTEXT_SYSTEM_AWARE        ');
-  print(
+  _Logger.log(
       'DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE        $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE   ');
-  print(
+  _Logger.log(
       'DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2     $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2');
-  print(
+  _Logger.log(
       'DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED        $DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED   ');
 
   int hWin = win32.GetForegroundWindow();
   int winDPI = win32.GetDpiForWindow(hWin);
-  print('winDPI = $winDPI');
+  _Logger.log('winDPI = $winDPI');
 }
 //WIN32//
 */
@@ -65,31 +73,37 @@ late CustomMouseCursor msIconCursor;
 late CustomMouseCursor assetCursorSingleSize;
 
 Future<void> initializeCursors() async {
-  print("Creating cursor from asset and from icon");
-  //final byte = await rootBundle.load("assets/cursors/mouse.png");
+  _Logger.log(chalk.brightRed("initializeCursors() Creating cursors from asset and from icon"));
 
-  CustomMouseCursor.useWebKitImageSet = true;
-  //CustomMouseCursor.useOnlyImageSetCSS = true;
-  //CustomMouseCursor.useOnlyURLDataURICursorCSS = true;
+  CustomMouseCursor.useWebKitImageSet = true; // Optional flag to specify web platform to use `-webkit-image-set` command instead of `image-set` (defaults to true).
+  //CustomMouseCursor.useOnlyImageSetCSS = true;   // Optional flag to specify web platform to use `image-set()` css commands only. (defaults to false).
+  //CustomMouseCursor.useOnlyURLDataURICursorCSS = true;  // Optional flag to specify web platform use only `url()` css commands. (defaults to false).
 
-  // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x
+  // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x).
+  // The exact size required for most DevicePixelRatio will be able to be loaded directly and used
+  // without scaling. 
   assetCursor = await CustomMouseCursor.asset(
       "assets/cursors/startrek_mousepointer.png",
       hotX: 18,
       hotY: 0);
 
+  // Example of image asset that has only device pixel ratio versions (1.0x ands 2.5x).
+  // In this case if the devicePixelRatio was 2.0x the 2.5x asset would be loaded and
+  // scaled down to 2.0x size.
   assetCursorOnly25 = await CustomMouseCursor.asset(
       "assets/cursors/startrek_mousepointer25Only.png",
       hotX: 18,
       hotY: 0);
 
-  // Example of image asset only at 8x native DevicePixelRatio so will get scaled down to most/all encoutered DPR's
+  // Example of image asset only at 8x native DevicePixelRatio so will get scaled down
+  // to most/all encoutered DPR's.
   assetNative8x = await CustomMouseCursor.exactAsset(
       "assets/cursors/star-trek-mouse-pointer-cursor292x512.png",
       hotX: 144,
       hotY: 0,
       nativeDevicePixelRatio: 8.0);
 
+  // Example of a custom cursor created from a icon, with drop shadow added.
   List<Shadow> shadows = [
     const BoxShadow(
       color: Color.fromRGBO(0, 0, 0, 0.8),
@@ -105,6 +119,8 @@ Future<void> initializeCursors() async {
       color: Colors.pinkAccent,
       shadows: shadows);
 
+  // example of custom cursor created from a icon that is filled, colored blue and
+  // added drop shadow.
   msIconCursor = await CustomMouseCursor.icon(
       MaterialSymbols.arrow_selector_tool,
       size: 32,
@@ -114,6 +130,8 @@ Future<void> initializeCursors() async {
       color: Colors.blueAccent,
       shadows: shadows);
 
+  // another exactAsset example where the supplied image asset is a 2.0x image.  This will
+  // be scaled down at 1.0x devicePixelRatios and scaled up for >2.0x device pixel ratios.
   assetCursorSingleSize = await CustomMouseCursor.exactAsset(
       "assets/cursors/example_game_cursor_64x64.png",
       hotX: 2,
@@ -123,16 +141,16 @@ Future<void> initializeCursors() async {
 
 /*
 void viewsReport(String message) {
-  print('Entering viewsReport() - $message');
+  _Logger.log('Entering viewsReport() - $message');
   for(final view in WidgetsBinding.instance.platformDispatcher.views) {
     view.platformDispatcher.onMetricsChanged = () {
-      print('view.platformdispatcher.onMetricsChanged() !!!!!');
+      _Logger.log('view.platformdispatcher.onMetricsChanged() !!!!!');
     };
-    print('View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
+    _Logger.log('View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
   }
   final implicitView = PlatformDispatcher.instance.implicitView;
-  print('PlatformDispatcher.instance.implicitView.viewId = ${implicitView?.viewId ?? 'implicitView IS NULL'} ');
-  print('leaving viewsReport()');
+  _Logger.log('PlatformDispatcher.instance.implicitView.viewId = ${implicitView?.viewId ?? 'implicitView IS NULL'} ');
+  _Logger.log('leaving viewsReport()');
 }
 */
 
@@ -141,7 +159,7 @@ void main() async {
 
 /*
   WidgetsBinding.instance.platformDispatcher.onMetricsChanged = () {
-    print('platformDispatcher - onMetricsChanged() (set in main) !!!');
+    _Logger.log('platformDispatcher - onMetricsChanged() (set in main) !!!');
   };
 */
   //CustomMouseCursor.noOnMetricsChangedHook = true;
@@ -174,12 +192,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeMetrics() {
-    print(chalk.brightYellow('WIDGETS onChangeMetrics() callback called!!!!'));
+    _Logger.log(chalk.brightYellow('WIDGETS onChangeMetrics() callback called!!!!'));
     setState(() {
       double prevDPR = _lastDevicePixelRatio;
       _lastSize = WidgetsBinding.instance.window.physicalSize;
       _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-      print(
+      _Logger.log(
           chalk.yellow('setState() in didChangeMetrics() Window size is $_lastSize  prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
 
       CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
@@ -189,19 +207,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print(chalk.yellow('WIDGETS didChangeDependencies() callback called!!!!'));
+    _Logger.log(chalk.yellow('WIDGETS didChangeDependencies() callback called!!!!'));
 
     double prevDPR = _lastDevicePixelRatio;
     _lastSize = WidgetsBinding.instance.window.physicalSize;
     _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-    print(
+    _Logger.log(
         chalk.yellow('in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
 
     CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
   }
 
   void selectCursorCallback(CustomMouseCursor cursor) {
-    print('Changing to cursor key=${cursor.key}');
+    _Logger.log('Changing to cursor key=${cursor.key}');
     //queryWin32();
     setState(() {
       currentDrawCursor = cursor;
@@ -211,13 +229,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    print(chalk.brightRed('MyApp initState() called'));
+    _Logger.log(chalk.brightRed('MyApp initState() called'));
     super.initState();
 
     _lastSize = WidgetsBinding.instance.window.physicalSize;
     _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
 
-    print(
+    _Logger.log(
         chalk.red('Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
     WidgetsBinding.instance.addObserver(this);
 

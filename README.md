@@ -9,7 +9,7 @@ int the same way you would use [SystemMouseCursors]().
 
 ## A LIVE flutter web example can be found [here](https://timmaffett.github.io/custom_mouse_cursor/)
 #### [(https://timmaffett.github.io/custom_mouse_cursor/)](https://timmaffett.github.io/custom_mouse_cursor/)
-The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with PR#xyz.
+The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with [PR#xyz](https://github.com/flutter/engine/pull/xyz).
 
 
 
@@ -24,10 +24,12 @@ The custom mouse cursors will be automatically adjusted for the system's deviceP
 
 ###Note
 
-CUrrently Flutter master channel is currently required for windows support.  This package provides platform plugins that provide support for macos and limux platforms.  
-Proper window's support is not possible without [changes to the fluter engine](https://github.com/flutter/engine/pull/36143) that are included within the master channel.
+Currently the flutter master channel is required for windows support. (Window's support is not possible without [changes to the flutter engine](https://github.com/flutter/engine/pull/36143) that are included within the master channel.)
 
-I have submitted a PR [pr number on engine] that provides support for the web platform.  With luck that PR will land in the master channel soon.
+This package provides platform plugins that provide support for macos and limux platforms on both the stable and master flutter channels.
+
+
+I have submitted [flutter engine PR#xyz]((https://github.com/flutter/engine/pull/xyz) that provides support for the web platform.  With luck that PR will land in the master channel soon.
 
 ## Supported Platforms
 
@@ -37,7 +39,7 @@ I have submitted a PR [pr number on engine] that provides support for the web pl
 - [x] Web (requires flutter engine PR #xyz, hopefully `master` channel soon)*
 
 * As of 4/9/23 Windows support requires the master channel (until [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) lands in stable).
-* As of 4/9/23 Web support requires custom engine with [flutter engine PR#xxxx](https://github.com/flutter/engine/pull/36143) lands in the master channel.
+* As of 4/9/23 Web support requires custom engine with [flutter engine PR#xxxx](https://github.com/flutter/engine/pull/xyz) lands in the master channel.
 
 This package could not exist without the work of @Kingtous's [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) allowing proper windows support and @imiskolee's github for original the [Windows, Mac and linux support](https://github.com/imiskolee/flutter_custom_cursor).
 
@@ -55,7 +57,9 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor1.png" width="100%">
 
 ```DART
-  // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x
+  // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x).
+  // The exact size required for most DevicePixelRatio will be able to be loaded directly and used
+  // without scaling. 
   assetCursor = await CustomMouseCursor.asset(
       "assets/cursors/startrek_mousepointer.png",
       hotX: 18,
@@ -65,9 +69,11 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor2.png" width="100%">
 
 ```dart
-  // Example of image asset that has obly device pixel ratio versions (1.0x ands 2.5x)
-  assetCursor = await CustomMouseCursor.asset(
-      "assets/cursors/startrek_mousepointer.png",
+  // Example of image asset that has only device pixel ratio versions (1.0x ands 2.5x).
+  // In this case if the devicePixelRatio was 2.0x the 2.5x asset would be loaded and
+  // scaled down to 2.0x size.
+  assetCursorOnly25 = await CustomMouseCursor.asset(
+      "assets/cursors/startrek_mousepointer25Only.png",
       hotX: 18,
       hotY: 0);
 
@@ -76,7 +82,8 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor3.png" width="100%">
 
 ```dart
-  // Example of image asset only at 8x native DevicePixelRatio so will get scaled down to most/all encoutered DPR's
+  // Example of image asset only at 8x native DevicePixelRatio so will get scaled down
+  // to most/all encoutered DPR's.
   assetNative8x = await CustomMouseCursor.exactAsset(
       "assets/cursors/star-trek-mouse-pointer-cursor292x512.png",
       hotX: 144,
@@ -87,6 +94,7 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor4.png" width="100%">
 
 ```dart
+  // Example of a custom cursor created from a icon, with drop shadow added.
   List<Shadow> shadows = [
     const BoxShadow(
       color: Color.fromRGBO(0, 0, 0, 0.8),
@@ -107,6 +115,8 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor5.png" width="100%">
 
 ```dart
+  // example of custom cursor created from a icon that is filled, colored blue and
+  // added drop shadow.
   msIconCursor = await CustomMouseCursor.icon(
       MaterialSymbols.arrow_selector_tool,
       size: 32,
@@ -120,6 +130,8 @@ Custom mouse cursors are can be created from asset images or icons.
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor6.png" width="100%">
 
 ```DART
+  // another exactAsset example where the supplied image asset is a 2.0x image.  This will
+  // be scaled down at 1.0x devicePixelRatios and scaled up for >2.0x device pixel ratios.
   assetCursorSingleSize = await CustomMouseCursor.exactAsset(
       "assets/cursors/example_game_cursor_64x64.png",
       hotX: 2,
