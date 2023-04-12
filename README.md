@@ -40,6 +40,8 @@ This package could not exist without the work of @Kingtous's [flutter engine PR#
 Note: Currently, the api required by this plugin on Windows is included in flutter `master` branch. It means that u need to use this plugin with flutter master branch on Windows platform. See [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) for details.
 
 ## Example use
+Each example shows excerpt from example app with the the cursor the example code created showing on the left side of the image.
+
 
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor1.png" width="100%">
 
