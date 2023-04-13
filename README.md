@@ -139,3 +139,22 @@ Custom mouse cursors are can be created from asset images or icons.
       nativeDevicePixelRatio: 2.0);
 ```
 
+
+```
+  // Here we create a ui.Image from loading raw bytes from rootBundle.load(), but this
+  // could be a ui.Image created any way, from drawing to the canvas, etc.
+  final rawBytes = await rootBundle.load("assets/cursors/cat_cursor.png");
+  final rawUintList = rawBytes.buffer.asUint8List();
+  final ui.Image catCursor_uiImage = await decodeImageFromList(rawUintList);
+
+  // another exactAsset example where the supplied image asset is a 2.0x image.  This will
+  // be scaled down at 1.0x devicePixelRatios and scaled up for >2.0x device pixel ratios.
+  catUiImageCursor = await CustomMouseCursor.image(
+      catCursor_uiImage,
+      hotX: 2,
+      hotY: 2,
+      thisImagesDevicePixelRatio: 2.0);
+    
+  // you could add additional images for different devicePixelRatios with 
+  // catUiImageCursor.addImage(..) 
+```

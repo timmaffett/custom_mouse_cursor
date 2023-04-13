@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/sharp.dart';
 import 'package:signature/signature.dart';
 import 'package:chalkdart/chalk.dart';
-
 
 class _Logger {
   static void log(String message) {
@@ -14,63 +14,14 @@ class _Logger {
   }
 }
 
-/*
-
-// Some of these api entry points require my custom version of the Win32 package
-//  I used this to experiment with using Windows's SetThreadCursorCreationScaling() functiun
-//  but that did not work when creating cursors from mempory based bitmaps.
-//  The mehtod that the package now uses to support varying DPI/DevicePixelRatio's is
-//  better anyway because it is completely cross platform and is very fast and seemless.
-import 'package:win32/win32.dart' as win32;
-import 'package:win32/winrt.dart' as winrt;
-
-void queryWin32() {
-  winrt.UISettings uisettings = winrt.UISettings();
-  final cursorSize = uisettings.cursorSize;
-
-  _Logger.log(
-      'uisettings cursorSize.width x height=${cursorSize.Width} x ${cursorSize.Height}');
-  final systemDPI = win32.GetDpiForSystem();
-  _Logger.log('systemDPI = $systemDPI');
-  final prevDPI = win32.SetThreadCursorCreationScaling(192);
-  _Logger.log(
-      'called SetThreadCursorCreationScaling( 192 ) and the prev value was $prevDPI');
-
-  final DPI_AWARENESS_CONTEXT_UNAWARE =
-      win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -1);
-  final DPI_AWARENESS_CONTEXT_SYSTEM_AWARE =
-      win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -2);
-  final DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE =
-      win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -3);
-  final DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 =
-      win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -4);
-  final DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED =
-      win32.GetDpiFromDpiAwarenessContext(/*(DPI_AWARENESS_CONTEXT)*/ -5);
-
-  _Logger.log(
-      'DPI_AWARENESS_CONTEXT_UNAWARE                  $DPI_AWARENESS_CONTEXT_UNAWARE             ');
-  _Logger.log(
-      'DPI_AWARENESS_CONTEXT_SYSTEM_AWARE             $DPI_AWARENESS_CONTEXT_SYSTEM_AWARE        ');
-  _Logger.log(
-      'DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE        $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE   ');
-  _Logger.log(
-      'DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2     $DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2');
-  _Logger.log(
-      'DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED        $DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED   ');
-
-  int hWin = win32.GetForegroundWindow();
-  int winDPI = win32.GetDpiForWindow(hWin);
-  _Logger.log('winDPI = $winDPI');
-}
-//WIN32//
-*/
-
 late CustomMouseCursor assetCursor;
 late CustomMouseCursor assetCursorOnly25;
 late CustomMouseCursor assetNative8x;
 late CustomMouseCursor iconCursor;
 late CustomMouseCursor msIconCursor;
 late CustomMouseCursor assetCursorSingleSize;
+late CustomMouseCursor catUiImageCursor;
+
 
 Future<void> initializeCursors() async {
   _Logger.log(chalk.brightRed("initializeCursors() Creating cursors from asset and from icon"));
@@ -137,39 +88,52 @@ Future<void> initializeCursors() async {
       hotX: 2,
       hotY: 2,
       nativeDevicePixelRatio: 2.0);
-}
 
-/*
-void viewsReport(String message) {
-  _Logger.log('Entering viewsReport() - $message');
-  for(final view in WidgetsBinding.instance.platformDispatcher.views) {
-    view.platformDispatcher.onMetricsChanged = () {
-      _Logger.log('view.platformdispatcher.onMetricsChanged() !!!!!');
-    };
-    _Logger.log('View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
+  // Now this is example of [image] use.  This is intended for more of a 'power user' interface
+  // as it is lower level in that it accepts ui.Image objects. (Image from `import 'dart:ui'`).
+  var rawBytes = await rootBundle.load("assets/cursors/cat_cursor4xWithPinkShadow.png"); // 196x272
+  var rawUintList = rawBytes.buffer.asUint8List();
+  final catCursorUiImage4x = await decodeImageFromList(rawUintList);
+  rawBytes = await rootBundle.load("assets/cursors/cat_cursor2xWithBlueShadow.png"); // 98x136
+  rawUintList = rawBytes.buffer.asUint8List();
+  final ui.Image catCursorUiImage2x = await decodeImageFromList(rawUintList);
+  // We create the image cursor with the 4.0x image - this could be the only image needed and all
+  // devicePixelRatios will be drived from this image by scaling..
+  catUiImageCursor = await CustomMouseCursor.image(
+      catCursorUiImage4x,
+      hotX: 2,
+      hotY: 2,
+      thisImagesDevicePixelRatio: 4.0);
+
+  // but we can also add additional images at other DPR to supply specific images for those
+  // DPR without the need to scale.
+  // By looking at the color of the shadow you can tell which cursor image is being used.
+  // Experiment with commenting out the following and see that the shadow changes to pink.
+  const illustrateUseOfAddtionalImages = false;
+  if(illustrateUseOfAddtionalImages) {
+    catUiImageCursor.addImage(
+        catCursorUiImage2x,
+        thisImagesDevicePixelRatio: 2.0);
   }
-  final implicitView = PlatformDispatcher.instance.implicitView;
-  _Logger.log('PlatformDispatcher.instance.implicitView.viewId = ${implicitView?.viewId ?? 'implicitView IS NULL'} ');
-  _Logger.log('leaving viewsReport()');
 }
-*/
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-/*
+  /* Comment left here to illustrate options.
+    If the user wants to implement custom `onMetricsChanged()` handling there
+    is a mechanism using ` CustomMouseCursor.noOnMetricsChangedHook = true;`.
+
+  CustomMouseCursor.noOnMetricsChangedHook = true;
   WidgetsBinding.instance.platformDispatcher.onMetricsChanged = () {
-    _Logger.log('platformDispatcher - onMetricsChanged() (set in main) !!!');
+    // you must call ensurePointersMatchDevicePixelRatio to handle devicePixelRatio changes
+    CustomMouseCursor.ensurePointersMatchDevicePixelRatio(null);
   };
-*/
-  //CustomMouseCursor.noOnMetricsChangedHook = true;
-  //KLUDGE//viewsReport('Called from MAIN');
+  */
 
   await initializeCursors();
 
   runApp(const MyApp());
-
-  //called immediately// CustomMouseCursor.disposeAll();
 }
 
 class MyApp extends StatefulWidget {
@@ -178,8 +142,6 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
-typedef SelectCursorCallback = void Function(CustomMouseCursor);
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final SignatureController _signatureController;
@@ -190,9 +152,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late Size _lastSize;
   late double _lastDevicePixelRatio;
 
+  /*
+  Illustrate OPTIONAL (power user) use of manual onMetricsChanged handling.
+  Typically THERE IS NO NEED TO DO THIS.
+  THIS can only be used if `CustomMouseCursor.noOnMetricsChangedHook = true;` is defined (SEE ABOVE).
+  Additionally it will only get called if `WidgetsBinding.instance.platformDispatcher.onMetricsChanged`
+  is not hooked with a function above.
+  See for //OPTIONAL_didChangeMetrics_HOOKING// comments and remove those also.
   @override
   void didChangeMetrics() {
-    _Logger.log(chalk.brightYellow('WIDGETS onChangeMetrics() callback called!!!!'));
+    _Logger.log(chalk.brightYellow('WIDGETS didChangeMetrics() callback called!!!!'));
     setState(() {
       double prevDPR = _lastDevicePixelRatio;
       _lastSize = WidgetsBinding.instance.window.physicalSize;
@@ -203,24 +172,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
     });
   }
+  */
+
+  /// Change this to true illustrates the widget calling the CustomMouseCursor DPR handler function
+  /// during didChangeDependencies call.
+  static const illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursors = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _Logger.log(chalk.yellow('WIDGETS didChangeDependencies() callback called!!!!'));
 
-    double prevDPR = _lastDevicePixelRatio;
-    _lastSize = WidgetsBinding.instance.window.physicalSize;
-    _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-    _Logger.log(
-        chalk.yellow('in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
+    // illustrate completely optional manual handling of DPR changes for CustomMouseCursor.
+    if(illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursors) {
+      double prevDPR = _lastDevicePixelRatio;
+      _lastSize = WidgetsBinding.instance.window.physicalSize;
+      _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
+      _Logger.log(
+          chalk.yellow('in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
 
-    CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
+      CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
+    }
   }
 
   void selectCursorCallback(CustomMouseCursor cursor) {
-    _Logger.log('Changing to cursor key=${cursor.key}');
-    //queryWin32();
+    _Logger.log('Changing to drawing area cursor to key=${cursor.key}');
     setState(() {
       currentDrawCursor = cursor;
       _signatureController.clear();
@@ -237,7 +213,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     _Logger.log(
         chalk.red('Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
-    WidgetsBinding.instance.addObserver(this);
+
+    //OPTIONAL_didChangeMetrics_HOOKING//WidgetsBinding.instance.addObserver(this);
 
     // Initialise a controller. It will contains signature points, stroke width and pen color.
     // It will allow you to interact with the widget
@@ -254,15 +231,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       controller: _signatureController,
       backgroundColor: Colors.white,
     ));
-
-    //KLUDGE//viewsReport('Called from End of InitState()');
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    WidgetsBinding.instance.removeObserver(this);
+    //OPTIONAL_didChangeMetrics_HOOKING//WidgetsBinding.instance.removeObserver(this);
 
     _signatureController.dispose();
     CustomMouseCursor.disposeAll();
@@ -277,7 +252,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             text: TextSpan(
               text: 'CustomMouseCursor Example and Interactive Test App',
               style:
-                  TextStyle(fontSize: 20), //DefaultTextStyle.of(context).style,
+                  const TextStyle(fontSize: 20),
               children: const <TextSpan>[
                 TextSpan(
                     text:
@@ -348,6 +323,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               color: Colors.orange,
               selectCursorCallback: selectCursorCallback,
             ),
+            CursorTesterSelectorRegion(
+              catUiImageCursor,
+              message: 'Click to Select Image Cursor',
+              note: '(created with a single ui.Image at DPR 2.0x)',
+              details:
+                  'CustomMouseCursor.image( uiImage, hotX: 2, hotY: 2, thisImagesDevicePixelRatio: 2.0)',
+              color: Colors.redAccent,
+              selectCursorCallback: selectCursorCallback,
+            ),
             MouseRegion(
               cursor: currentDrawCursor != null
                   ? currentDrawCursor!
@@ -372,6 +356,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
+
+typedef SelectCursorCallback = void Function(CustomMouseCursor);
 
 class CursorTesterSelectorRegion extends StatelessWidget {
   final Color color;
@@ -456,10 +442,3 @@ class CursorTesterSelectorRegion extends StatelessWidget {
     );
   }
 }
-
-/*
-Future<img2.Image> getImage(Uint8List bytes) async {
-  img = img2.decodePng(bytes)!;
-  return img;
-}
-*/
