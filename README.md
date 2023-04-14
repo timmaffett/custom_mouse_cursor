@@ -8,8 +8,9 @@ This package provides simple custom mouse cursor support for Flutter.  The custo
 int the same way you would use [SystemMouseCursors](). 
 
 ## A LIVE flutter web example can be found [here](https://timmaffett.github.io/custom_mouse_cursor/)
-#### [(https://timmaffett.github.io/custom_mouse_cursor/)](https://timmaffett.github.io/custom_mouse_cursor/)
-The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with [PR#xyz](https://github.com/flutter/engine/pull/xyz).
+[Example at https://timmaffett.github.io/custom_mouse_cursor/](https://timmaffett.github.io/custom_mouse_cursor/)
+
+The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with [PR#41186](https://github.com/flutter/engine/pull/41186).
 
 
 
@@ -29,17 +30,17 @@ Currently the flutter master channel is required for windows support. (Window's 
 This package provides platform plugins that provide support for macos and limux platforms on both the stable and master flutter channels.
 
 
-I have submitted [flutter engine PR#xyz]((https://github.com/flutter/engine/pull/xyz) that provides support for the web platform.  With luck that PR will land in the master channel soon.
+I have submitted [flutter engine PR#41186](https://github.com/flutter/engine/pull/41186) that provides support for the web platform.  With luck that PR will land in the master channel soon.
 
 ## Supported Platforms
 
 - [x] macOS (works with current flutter `stable` channel or `master`)
 - [x] Linux (works with current flutter `stable` channel or `master`)
 - [x] Windows (requires the flutter `master` channel)*
-- [x] Web (requires flutter engine PR #xyz, hopefully `master` channel soon)*
+- [x] Web (requires flutter engine [PR#41186](https://github.com/flutter/engine/pull/41186), hopefully `master` channel soon)*
 
 * As of 4/9/23 Windows support requires the master channel (until [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) lands in stable).
-* As of 4/9/23 Web support requires custom engine with [flutter engine PR#xxxx](https://github.com/flutter/engine/pull/xyz) lands in the master channel.
+* As of 4/9/23 Web support requires custom engine with [flutter engine PR#41186](https://github.com/flutter/engine/pull/41186) lands in the master channel.
 
 This package could not exist without the work of @Kingtous's [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) allowing proper windows support and @imiskolee's github for original the [Windows, Mac and linux support](https://github.com/imiskolee/flutter_custom_cursor).
 
