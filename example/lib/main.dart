@@ -101,9 +101,10 @@ Future<void> initializeCursors() async {
   // devicePixelRatios will be drived from this image by scaling..
   catUiImageCursor = await CustomMouseCursor.image(
       catCursorUiImage4x,
-      hotX: 2,
-      hotY: 2,
-      thisImagesDevicePixelRatio: 4.0);
+      hotX: 4,
+      hotY: 30,
+      thisImagesDevicePixelRatio: 4.0,
+      finalizeForCurrentDPR: false);
 
   // but we can also add additional images at other DPR to supply specific images for those
   // DPR without the need to scale.
@@ -111,10 +112,11 @@ Future<void> initializeCursors() async {
   // Experiment with commenting out the following and see that the shadow changes to pink.
   const illustrateUseOfAddtionalImages = false;
   if(illustrateUseOfAddtionalImages) {
-    catUiImageCursor.addImage(
+    await catUiImageCursor.addImage(
         catCursorUiImage2x,
         thisImagesDevicePixelRatio: 2.0);
   }
+  await catUiImageCursor.finalizeImages();
 }
 
 void main() async {
@@ -215,6 +217,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         chalk.red('Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
 
     //OPTIONAL_didChangeMetrics_HOOKING//WidgetsBinding.instance.addObserver(this);
+
+    // call once in the initState() to 
+    //CustomMouseCursor.ensurePointersMatchDevicePixelRatio(null);
 
     // Initialise a controller. It will contains signature points, stroke width and pen color.
     // It will allow you to interact with the widget
@@ -326,9 +331,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             CursorTesterSelectorRegion(
               catUiImageCursor,
               message: 'Click to Select Image Cursor',
-              note: '(created with a single ui.Image at DPR 2.0x)',
+              note: '(created with a single ui.Image at DPR 4.0x)',
               details:
-                  'CustomMouseCursor.image( uiImage, hotX: 2, hotY: 2, thisImagesDevicePixelRatio: 2.0)',
+                  'CustomMouseCursor.image( uiImage, hotX: 4, hotY: 30, thisImagesDevicePixelRatio: 4.0)',
               color: Colors.redAccent,
               selectCursorCallback: selectCursorCallback,
             ),
@@ -339,7 +344,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Row(
+                    Row(  // todo: const  but Not on stable channel  
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(

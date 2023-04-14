@@ -41,36 +41,33 @@ GdkWindow *get_gdk_window(CustomMouseCursorPlugin *self)
 {
   return gtk_widget_get_window(GTK_WIDGET(get_window(self)));
 }
+
+// The [args] will contain
 //  <String, dynamic>{
-//     'device': device,
-//     'path': cursor.path,
-//     'x' : cursor.x,
-//     'y' : cursor.y,
+//     'name': string,
+//     'buffer': ptr to png pixel buffer,
+//     'hotX : double - x coord of hotspot
+//     'hotY' : double - y coord of hotspor
+//     'width':  int - width of image in pixelbuffer
+//     'height': int - height of image in pixelbuffer
 //   },
-// static void activate_cursor(CustomMouseCursorPlugin *self, FlValue *args)
-// {
-//   GtkWindow *window = get_window(self);
-//   const gchar *cursor_path = fl_value_get_string(fl_value_lookup_string(args, "path"));
-//   double x = fl_value_get_float(fl_value_lookup_string(args, "x"));
-//   double y = fl_value_get_float(fl_value_lookup_string(args, "y"));
-//   // int device = fl_value_get_int(fl_value_lookup_string(args, "device"));
-//   GdkDisplay *display = gdk_display_get_default();
-//   GtkImage *image = GTK_IMAGE(gtk_image_new_from_file(cursor_path));
-//   g_autoptr(GdkPixbuf) pixbuf = gtk_image_get_pixbuf(image);
-//   g_autoptr(GdkCursor) cursor = gdk_cursor_new_from_pixbuf(display, pixbuf, x, y);
-//   gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(window)), cursor);
+/* 
+Thisd mimics the flutter's built in handing of custom cursors for windows
+from engine/src/flutter/shell/platform/windows/cursor_handler.cc:
 
-//   g_object_ref_sink(image);
-// }
-
-
-//  <String, dynamic>{
-//     'device': device,
-//     'buffer': cursor.buffer,
-//     'x' : cursor.x,
-//     'y' : cursor.y,
-//     'length':  cursor.buffer.length
-//   },
+static constexpr char kCustomCursorNameKey[] = "name";
+// A list of bytes, the custom cursor's rawBGRA buffer.
+static constexpr char kCustomCursorBufferKey[] = "buffer";
+// A double, the x coordinate of the custom cursor's hotspot, starting from
+// left.
+static constexpr char kCustomCursorHotXKey[] = "hotX";
+// A double, the y coordinate of the custom cursor's hotspot, starting from top.
+static constexpr char kCustomCursorHotYKey[] = "hotY";
+// An int value for the width of the custom cursor.
+static constexpr char kCustomCursorWidthKey[] = "width";
+// An int value for the height of the custom cursor.
+static constexpr char kCustomCursorHeightKey[] = "height";
+*/
 static string create_custom_cursor(CustomMouseCursorPlugin *self, FlValue *args)
 {
   auto name = string(fl_value_get_string(fl_value_lookup_string(args, "name")));
@@ -86,7 +83,6 @@ static string create_custom_cursor(CustomMouseCursorPlugin *self, FlValue *args)
   if (cursor_buff == nullptr) {
     return nullptr;
   }
-  //  int device = fl_value_get_int(fl_value_lookup_string(args, "device"));
   g_autoptr(GdkPixbufLoader) loader = gdk_pixbuf_loader_new();
   gdk_pixbuf_loader_write(loader, cursor_buff, length, nullptr);
   // if (width >= 0 && height >= 0)

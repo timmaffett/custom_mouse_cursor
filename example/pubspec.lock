@@ -339,11 +339,9 @@ packages:
     source: hosted
     version: "5.3.0"
   sky_engine:
-    dependency: "direct overridden"
-    description:
-      path: "../../build_flutter/engine/src/out/host_debug_unopt/gen/dart-pkg/sky_engine"
-      relative: true
-    source: path
+    dependency: transitive
+    description: flutter
+    source: sdk
     version: "0.0.99"
   source_span:
     dependency: transitive
