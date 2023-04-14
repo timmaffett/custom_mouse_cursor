@@ -504,8 +504,10 @@ ui.PointerData _pointerData(
   int device = 0,
   PointerDeviceKind kind = PointerDeviceKind.mouse,
 }) {
-  final double devicePixelRatio = RendererBinding
-      .instance.platformDispatcher.implicitView!.devicePixelRatio;
+  /* KLUDGE TMM */
+  // TODO: tmm fix this
+  final double devicePixelRatio = 1.0;
+  //TMM KLUDGE RendererBinding.instance.platformDispatcher.implicitView!.devicePixelRatio;
   return ui.PointerData(
     change: change,
     physicalX: logicalPosition.dx * devicePixelRatio,

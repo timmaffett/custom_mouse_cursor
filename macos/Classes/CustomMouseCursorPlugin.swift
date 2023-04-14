@@ -48,11 +48,11 @@ public class CustomMouseCursorPlugin: NSObject, FlutterPlugin {
     // no need to provide width and height on macOS API
     let _ = arguments["width"] as! Int
     let _ = arguments["height"] as! Int
-    let image = memoryImage(data: Data(buffer))
+    let image = memoryFromImage(data: Data(buffer))
     if (image == nil) {
         return nil;
     }
-    let cursor = getCursor(image: image!, x: hotX, y: hotY)
+    let cursor = getCursorFromImage(image: image!, x: hotX, y: hotY)
     caches[name] = cursor;
     return name
   }
@@ -80,7 +80,7 @@ public class CustomMouseCursorPlugin: NSObject, FlutterPlugin {
     private func activateMemoryImageCursor(_ arguments: Dictionary<String,Any>) {
         let buffer = arguments["buffer"] as! FlutterStandardTypedData
         let byte = [UInt8](buffer.data);
-        var image = memoryImage(data: Data(byte))
+        var image = memoryFromImage(data: Data(byte))
         if (image == nil) {
             return
         }
@@ -88,14 +88,14 @@ public class CustomMouseCursorPlugin: NSObject, FlutterPlugin {
         if (arguments["scale_x"] as! Int != -1) {
             image = resize(image: image!, w: arguments["scale_x"] as! Int, h: arguments["scale_y"] as! Int)
         }
-        let cursor = getCursor(image: image!, x: arguments["x"] as? Double, y: arguments["y"] as? Double)
+        let cursor = getCursorFromImage(image: image!, x: arguments["x"] as? Double, y: arguments["y"] as? Double)
         cursor.set()
     }
  
     private func activeCursor(_ arguments: Dictionary<String,Any>) {
         let path = arguments["path"] as! String
         let fullPath = Bundle.main.bundlePath + "/Contents/Frameworks/App.framework/Resources/flutter_assets/" + path
-        let cursor = getCursor(path:fullPath,
+        let cursor = getCursorFromFile(path:fullPath,
                                x:arguments["x"] as? Double,
                                y:arguments["y"] as? Double)
         cursor?.set()
@@ -112,21 +112,21 @@ public class CustomMouseCursorPlugin: NSObject, FlutterPlugin {
     }
     
     
-    private func getCursor(path:String,x:Double?,y:Double?) -> NSCursor? {
+    private func getCursorFromFile(path:String,x:Double?,y:Double?) -> NSCursor? {
         var cursor = caches[path]
         if(cursor != nil) {
             return cursor!
         }
-        let img = image(named: path)
+        let img = imageFromFile(named: path)
         if(img == nil) {
             return nil
         }
-        cursor = getCursor(image: img!, x: x, y: y)
+        cursor = getCursorFromImage(image: img!, x: x, y: y)
         caches[path] = cursor
         return cursor!
     }
     
-    private func getCursor(image: NSImage,x:Double?,y:Double?) -> NSCursor {
+    private func getCursorFromImage(image: NSImage,x:Double?,y:Double?) -> NSCursor {
         var dx = x;
         var dy = y;
         if(dx == nil) {
@@ -140,11 +140,35 @@ public class CustomMouseCursorPlugin: NSObject, FlutterPlugin {
         return cursor
     }
     
-    private func image(named:String) -> NSImage?{
+    private func imageFromFile(named:String) -> NSImage?{
         return NSImage.init(contentsOfFile:"\(named)");
     }
     
-    private func memoryImage(data: Data) -> NSImage? {
+    private func memoryFromImage(data: Data) -> NSImage? {
         return NSImage.init(data: data)
     }
+
+/*
+    // https://stackoverflow.com/questions/19245387/nscursor-using-high-resolution-cursors-with-cursor-zoom-or-retina
+    private func hintedCursor(image:NSImage) -> NSCursor? {
+        //NSImage *   theImage = [NSImage imageNamed: @"CURS_128.pdf"];
+
+        NSImage *resultImage = [[NSImage alloc] initWithSize:[theImage size]];
+
+        for (int scale = 1; scale <= 4; scale++) {
+            NSAffineTransform *xform = [[NSAffineTransform alloc] init];
+            [xform scaleBy:scale];
+            id hints = @{ NSImageHintCTM: xform };
+            CGImageRef rasterCGImage = [theImage CGImageForProposedRect:NULL context:nil hints:hints];
+            NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithCGImage:rasterCGImage];
+            [rep setSize:[theImage size]];
+            [resultImage addRepresentation:rep];
+        }
+
+        NSCursor*   theCursor = [[NSCursor alloc] initWithImage: resultImage hotSpot: NSMakePoint(12,8)];
+        //[self.scrollView setDocumentCursor: theCursor];
+        return theCursor;
+    }
+*/
+
 }
