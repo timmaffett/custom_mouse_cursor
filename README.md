@@ -139,6 +139,7 @@ Custom mouse cursors are can be created from asset images or icons.
       nativeDevicePixelRatio: 2.0);
 ```
 
+<img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_cursor7.png" width="100%">
 
 ```
   // Here we create a ui.Image from loading raw bytes from rootBundle.load(), but this
