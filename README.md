@@ -4,11 +4,19 @@
 ![Publisher: hiveright.tech](https://img.shields.io/pub/publisher/custom_mouse_cursor)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
-This package provides simple custom mouse cursor support for Flutter.  The custom mouse cursors are devicePixelRatio aware so they will remanin the proper size on different devicePixelRatio's and on machines with multiple monitors with varying devicePixelRatios.  Simply create [CustomMouseCursor]()'s objects and use them
-int the same way you would use [SystemMouseCursors](). 
+This package provides custom system mouse cursor support for Flutter.  The custom mouse cursors are native system cursors which are devicePixelRatio aware so they will remanin the proper size on different devicePixelRatio's and on machines with multiple monitors with varying devicePixelRatios.  Simply create [CustomMouseCursor]()'s objects and use them in the same way you would use [SystemMouseCursors](). 
+
+They are trivial to create from any flutter icon or from image assets.
+
+```dart
+  // from image
+  myCustomCursor = await CustomMouseCursor.asset('myCursorImage.png',  hotX:2, hotY:2 );
+  // from icon
+  iconCursor = await CustomMouseCursor.icon( Icons.redo, size: 24, hotX: 22, hotY: 17 );
+```
 
 ## A LIVE flutter web example can be found [here](https://timmaffett.github.io/custom_mouse_cursor/)
-[Example at https://timmaffett.github.io/custom_mouse_cursor/](https://timmaffett.github.io/custom_mouse_cursor/)
+### (at https://timmaffett.github.io/custom_mouse_cursor/ )
 
 The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with [PR#41186](https://github.com/flutter/engine/pull/41186).
 
@@ -85,7 +93,7 @@ Custom mouse cursors are can be created from asset images or icons.
 ```dart
   // Example of image asset only at 8x native DevicePixelRatio so will get scaled down
   // to most/all encoutered DPR's.
-  assetNative8x = await CustomMouseCursor.exactAsset(
+  assetCursorNative8x = await CustomMouseCursor.exactAsset(
       "assets/cursors/star-trek-mouse-pointer-cursor292x512.png",
       hotX: 144,
       hotY: 0,
