@@ -945,7 +945,7 @@ class CustomMouseCursor extends MouseCursor {
       // todo: tmm fix this deprecated code once there is a common way in stable
       currentDevicePixelRatio = _getCurrentDevicePixelRatioFromWindow();
       _Logger.log(
-        '  _commonCursorImageInstaller() existingCursorToUpdate=$existingCursorToUpdate  Current currentDevicePixelRatio from WidgetsBinding! devicePixelRatio = ${currentDevicePixelRatio}');
+        '  _commonCursorImageInstaller() existingCursorToUpdate=$existingCursorToUpdate  Current currentDevicePixelRatio from WidgetsBinding! devicePixelRatio = $currentDevicePixelRatio');
     }
 
     // If a different DPR was sent for the image other that does NOT match the [currentDevicePixelRatio] then
@@ -1322,7 +1322,7 @@ class CustomMouseCursor extends MouseCursor {
           '    Checking DPR for ${cursor.key}  cursor.originStory=${cursor.originStory}');
       if (cursor.currentCursorDevicePixelRatio != currentDevicePixelRatio) {
         _Logger.log(
-            '    Current DPI is different than cursors DPI!!!    cursor.currentCursorDevicePixelRatio=${cursor.currentCursorDevicePixelRatio} != currentDevicePixelRatio=${currentDevicePixelRatio}');
+            '    Current DPI is different than cursors DPI!!!    cursor.currentCursorDevicePixelRatio=${cursor.currentCursorDevicePixelRatio} != currentDevicePixelRatio=$currentDevicePixelRatio');
 
         if(cursor.switchToCachedDevicePixelRatioIfPossible(currentDevicePixelRatio)) {
           // found in cache
