@@ -1560,9 +1560,10 @@ class CustomMouseCursor extends MouseCursor {
       // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
-    if(_lastImageConfiguration!=null && _lastImageConfiguration!.devicePixelRatio!=null) {
+    if (_lastImageConfiguration != null &&
+        _lastImageConfiguration!.devicePixelRatio != null) {
       return _lastImageConfiguration!.devicePixelRatio!;
-    }  
+    }
     if (PlatformDispatcher.instance.implicitView == null) {
       _multiWindowsSetupDetected = true;
       throw ('CustomMouseCursor detected null PlatformDispatcher.instance.implicitView which means Multiple Window Environment _multiWindowsSetupDetected=$_multiWindowsSetupDetected');
