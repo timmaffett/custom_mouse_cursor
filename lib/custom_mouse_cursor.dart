@@ -1,3 +1,5 @@
+// ignore_for_file: dead_code, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -1800,6 +1802,7 @@ class CustomMouseCursor extends MouseCursor {
       // Flutter deprecated version
       uiImage = await decodeImageFromList(rawUint8);
       if (rescaleRatioRequiredForImage != 1.0) {
+        // now that we have uiImage we can get size and then RE-decode it and scale...
         final ui.Codec codec = await PaintingBinding.instance
             .instantiateImageCodec(rawUint8,
                 cacheWidth:
