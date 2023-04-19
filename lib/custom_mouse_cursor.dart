@@ -14,7 +14,7 @@ const bool _oldFlutterAPIS = false;
 
 class _Logger {
   static const logging = false; // set to false for release
-  static const hookLogging = true; // set to false for release
+  static const hookLogging = false; // set to false for release
   static void log(String message) {
     debugPrint(message);
   }
@@ -366,10 +366,10 @@ class CustomMouseCursor extends MouseCursor {
           : AssetImage(assetName, bundle: bundle, package: package);
       assetAwareKey =
           await assetBundleImageProvider.obtainKey(_lastImageConfiguration!);
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  _lastImageConfiguration returned DPR of ${_lastImageConfiguration!.devicePixelRatio} for system');
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
 
@@ -378,12 +378,12 @@ class CustomMouseCursor extends MouseCursor {
         //  (ExactImageAsset() will always return scale of 1.0)
         rescaleRatioRequiredForImage =
             _lastImageConfiguration!.devicePixelRatio! / nativeDevicePixelRatio;
-        if (_Logger.logging) if (_Logger.logging)
+        if (_Logger.logging)
           _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
-        if (_Logger.logging) if (_Logger.logging)
+        if (_Logger.logging)
           _Logger.log(
               '  $nativeDevicePixelRatio was PASSED for native - but then _lastImageConfiguration!.devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio} and assetAwareKey.scale=${assetAwareKey.scale}');
-        if (_Logger.logging) if (_Logger.logging)
+        if (_Logger.logging)
           _Logger.log(
               '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
       } else {
@@ -393,12 +393,12 @@ class CustomMouseCursor extends MouseCursor {
             _lastImageConfiguration!.devicePixelRatio! / assetAwareKey.scale;
       }
 
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  Using lastImageConfiguration got rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage  name=${assetAwareKey.name} scale=${assetAwareKey.scale}');
       if (nativeDevicePixelRatio !=
           _lastImageConfiguration!.devicePixelRatio!) {
-        if (_Logger.logging) if (_Logger.logging)
+        if (_Logger.logging)
           _Logger.log(
               '  CHANGING NATIVE PIXEL RATIO (OLD DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY)');
         double adjustHotsToNativeDPRChange =
@@ -409,7 +409,7 @@ class CustomMouseCursor extends MouseCursor {
         if (!useExactAssetImage) {
           exactAssetDevicePixelRatio = nativeDevicePixelRatio;
         }
-        if (_Logger.logging) if (_Logger.logging)
+        if (_Logger.logging)
           _Logger.log(
               '  UPDATED values DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY   exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
       }
@@ -422,7 +422,7 @@ class CustomMouseCursor extends MouseCursor {
 
     // NOW we have decide on the name we will use then check for existing cursor
     if (_cursorCacheOfAllCreatedCursors.containsKey(assetName)) {
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log('  Found cursor in cache with assetname =$assetName');
       return _cursorCacheOfAllCreatedCursors[assetName]!;
     }
@@ -436,7 +436,7 @@ class CustomMouseCursor extends MouseCursor {
         rawUint8,
         rescaleRatioRequiredForImage: rescaleRatioRequiredForImage);
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  Loaded Asset image width=${uiImage.width} height=${uiImage.height}');
 
@@ -451,7 +451,7 @@ class CustomMouseCursor extends MouseCursor {
     cursor._assetBundleImageProvider = assetBundleImageProvider;
     cursor._exactAssetDevicePixelRatio = exactAssetDevicePixelRatio;
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  ALMOST DONE ABOUT TO CHECK _createDevicePixelRatio1xVersion IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  nativeDevicePixelRatio=$nativeDevicePixelRatio');
     if (kIsWeb && _useURLDataURICursorCSS && nativeDevicePixelRatio != 1.0) {
@@ -475,7 +475,7 @@ class CustomMouseCursor extends MouseCursor {
         '_updateAssetToNewDpi() called on non asset cursor ($originStory key=$key)');
     assert(_assetBundleImageProvider != null);
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(chalk.brightGreen(
           'ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) '));
 
@@ -491,10 +491,10 @@ class CustomMouseCursor extends MouseCursor {
     final assetAwareKey =
         await _assetBundleImageProvider!.obtainKey(forcedImageConfig);
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  forcedImageConfig returned DPR of ${forcedImageConfig.devicePixelRatio} for system');
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
 
@@ -506,12 +506,12 @@ class CustomMouseCursor extends MouseCursor {
       //  ratio we were told the image representing in the call to exactAsset().
       rescaleRatioRequiredForImage =
           newDevicePixelRatio / _exactAssetDevicePixelRatio!;
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  newDevicePixelRatio=$newDevicePixelRatio (orginally we were told nativeDevicePixelRatio=$nativeDevicePixelRatio) was PASSED for native - but then newDevicePixelRatio=$newDevicePixelRatio and assetAwareKey.scale=${assetAwareKey.scale}');
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
     } else {
@@ -527,7 +527,7 @@ class CustomMouseCursor extends MouseCursor {
     double hotX = hotXAtNativeDevicePixelRatio * adjustHotSpotRatio;
     double hotY = hotYAtNativeDevicePixelRatio * adjustHotSpotRatio;
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  _updateAssetToNewDpi() updating by LOADING asset ${assetAwareKey.name} scale=${assetAwareKey.scale} rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage adjusted adjustHotSpotRatio=$adjustHotSpotRatio hotX=$hotX hotY=$hotY');
 
@@ -539,10 +539,10 @@ class CustomMouseCursor extends MouseCursor {
         rawUint8,
         rescaleRatioRequiredForImage: rescaleRatioRequiredForImage);
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  _updateAssetToNewDpi() UPDATE Asset loaded image width=${uiImage.width} height=${uiImage.height}');
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  calling image() with EXISTING ASSET CURSOR newDevicePixelRatio=$newDevicePixelRatio');
     await _commonCursorImageInstaller(
@@ -697,16 +697,16 @@ class CustomMouseCursor extends MouseCursor {
     double currentDevicePixelRatio =
         _getCurrentDevicePixelRatioFromLastConfigOrWindow();
     if (currentDevicePixelRatio != 1.0) {
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(chalk.color.pink(
             '\n \n  \n   \nEntering ICON creation currentDevicePixelRatio=$currentDevicePixelRatio'));
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log('  Must adjust size=$size   hotX=$hotX   hotY=$hotY ');
       double adjustRatio = currentDevicePixelRatio / 1.0;
       size = size * adjustRatio;
       hotX = (hotX * adjustRatio).round();
       hotY = (hotY * adjustRatio).round();
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log('  ADJUSTED adjust size=$size   hotX=$hotX   hotY=$hotY ');
     }
 
@@ -726,7 +726,7 @@ class CustomMouseCursor extends MouseCursor {
 
     cursor._iconCreationInfo = iconCreationInfo;
 
-    if (_Logger.logging) if (_Logger.logging)
+    if (_Logger.logging)
       _Logger.log(
           '  About to check for NEED TO CREATE 1x for web - IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  currentDevicePixelRatio=$currentDevicePixelRatio');
     if (kIsWeb && _useURLDataURICursorCSS && currentDevicePixelRatio != 1.0) {
@@ -751,7 +751,7 @@ class CustomMouseCursor extends MouseCursor {
       int newHotY =
           (_iconCreationInfo!.hotYInLogicalPixels * scaleRatio).round();
 
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(chalk.cyan(
             '  updateIconToNewDpi() making icon at newSize=$newSize   (scaleRatio=$scaleRatio)'));
 
@@ -763,7 +763,7 @@ class CustomMouseCursor extends MouseCursor {
           iconGrade: _iconCreationInfo!.grade,
           iconOpticalSize: _iconCreationInfo!.opticalSize,
           shadows: _iconCreationInfo!.shadows);
-      if (_Logger.logging) if (_Logger.logging)
+      if (_Logger.logging)
         _Logger.log(
             '  CALLING image with EXISTING ICON IMAGE TO UPDATE WITH NEW icon Image newDevicePixelRatio=$newDevicePixelRatio');
       _commonCursorImageInstaller(
