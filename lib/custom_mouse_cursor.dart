@@ -11,9 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chalkdart/chalk.dart';
 
-/// Whether to use OLD FLUTTER deprecated APIS for image decoding - this is required for using stable channel ?
-const bool _oldFlutterAPIS = false;
-
 class _Logger {
   static const logging = false; // set to false for release
   static const hookLogging = false; // set to false for release
@@ -1796,40 +1793,20 @@ class CustomMouseCursor extends MouseCursor {
       return await decodeImageFromList(rawUint8);
     }
 
-    // otherwise scaling required - there is the deprecated way and non-deprecated way - second way requires the MASTER CHANNEL
-    ui.Image? uiImage;
-    if (_oldFlutterAPIS) {
-      // Flutter deprecated version
-      uiImage = await decodeImageFromList(rawUint8);
-      if (rescaleRatioRequiredForImage != 1.0) {
-        // now that we have uiImage we can get size and then RE-decode it and scale...
-        final ui.Codec codec = await PaintingBinding.instance
-            .instantiateImageCodec(rawUint8,
-                cacheWidth:
-                    (uiImage.width * rescaleRatioRequiredForImage).round(),
-                cacheHeight:
-                    (uiImage.height * rescaleRatioRequiredForImage).round(),
-                allowUpscaling: (rescaleRatioRequiredForImage > 1.0));
-        final ui.FrameInfo frameInfo = await codec.getNextFrame();
-        uiImage = frameInfo.image;
-      }
-    } else {
-      // Flutter non deprecated version
-      final ui.Codec codec = await PaintingBinding.instance
-          .instantiateImageCodecWithSize(
-              await ImmutableBuffer.fromUint8List(rawUint8),
-              getTargetSize: rescaleRatioRequiredForImage == 1.0
-                  ? null
-                  : (int width, int height) {
-                      return TargetImageSize(
-                          width: (width * rescaleRatioRequiredForImage).round(),
-                          height:
-                              (height * rescaleRatioRequiredForImage).round());
-                    });
-      final ui.FrameInfo frameInfo = await codec.getNextFrame();
-      uiImage = frameInfo.image;
-    }
-    return uiImage;
+    // decode and scale - new/non deprecated version
+    final ui.Codec codec = await PaintingBinding.instance
+        .instantiateImageCodecWithSize(
+            await ImmutableBuffer.fromUint8List(rawUint8),
+            getTargetSize: rescaleRatioRequiredForImage == 1.0
+                ? null
+                : (int width, int height) {
+                    return TargetImageSize(
+                        width: (width * rescaleRatioRequiredForImage).round(),
+                        height:
+                            (height * rescaleRatioRequiredForImage).round());
+                  });
+    final ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
   }
 }
 
