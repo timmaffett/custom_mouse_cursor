@@ -1,3 +1,9 @@
+## 1.0.3
+
+* Fix onMetricsChange() callback to chain to previous set callback.
+* Cleanup logging and enable const setting to eliminate entirely.
+* Made imageBuffer non-nullable and always present in cache.
+
 ## 1.0.2
 
 * Clean up readme and example.
