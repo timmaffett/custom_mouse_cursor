@@ -1532,7 +1532,6 @@ class CustomMouseCursor extends MouseCursor {
   static bool _onMetricChangedCallbackSet = false;
 
   static bool _multiWindowsSetupDetected = false;
-  static const bool _usePreFlutter39 = false;
 
   /// get current devicePixelRatio from WigetsBinding.instance.window - WARNING deprecated
   /// todo: tmm - this is not multiwindow aware, uses deprecated `window`, but works in stable channel
@@ -1543,7 +1542,12 @@ class CustomMouseCursor extends MouseCursor {
       // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
-    return WidgetsBinding.instance.window.devicePixelRatio;
+    if (PlatformDispatcher.instance.implicitView == null) {
+      _multiWindowsSetupDetected = true;
+      throw ('CustomMouseCursor detected null PlatformDispatcher.instance.implicitView which means Multiple Window Environment _multiWindowsSetupDetected=$_multiWindowsSetupDetected');
+    }
+    return PlatformDispatcher.instance.implicitView!.devicePixelRatio;
+    //OLD DEPRECATED WAY//return WidgetsBinding.instance.window.devicePixelRatio;
   }
 
   /// get current devicePixelRatio from either [_lastImageConfiguration] or from the
@@ -1556,8 +1560,16 @@ class CustomMouseCursor extends MouseCursor {
       // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
-    return _lastImageConfiguration?.devicePixelRatio ??
-        WidgetsBinding.instance.window.devicePixelRatio;
+    if(_lastImageConfiguration!=null && _lastImageConfiguration!.devicePixelRatio!=null) {
+      return _lastImageConfiguration!.devicePixelRatio!;
+    }  
+    if (PlatformDispatcher.instance.implicitView == null) {
+      _multiWindowsSetupDetected = true;
+      throw ('CustomMouseCursor detected null PlatformDispatcher.instance.implicitView which means Multiple Window Environment _multiWindowsSetupDetected=$_multiWindowsSetupDetected');
+    }
+    return PlatformDispatcher.instance.implicitView!.devicePixelRatio;
+    //DEPRECATED WAY//return _lastImageConfiguration?.devicePixelRatio ??
+    //DEPRECATED WAY//    WidgetsBinding.instance.window.devicePixelRatio;
   }
 
   /// Various ways of getting current DevicePixelRatio - included here are various methods for OLD/New Flutter,
@@ -1576,10 +1588,10 @@ class CustomMouseCursor extends MouseCursor {
       return 1.0;
     }
 
-    if (_usePreFlutter39) {
-      // deprecated way to get pixel ratio
-      return WidgetsBinding.instance.window.devicePixelRatio;
-    }
+    //DEPRECATED WAY//if (_usePreFlutter39) {
+    //DEPRECATED WAY//  // deprecated way to get pixel ratio
+    //DEPRECATED WAY//  return WidgetsBinding.instance.window.devicePixelRatio;
+    //DEPRECATED WAY//}
 
     // Flutter 3.9
     if (PlatformDispatcher.instance.implicitView == null) {
