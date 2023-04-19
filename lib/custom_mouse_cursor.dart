@@ -1650,14 +1650,13 @@ class CustomMouseCursor extends MouseCursor {
       } else {
         // TODO: tmm  properly develop/test this once multiple windows/views is implemented in flutter
         // put the callback on ALL views
-        int viewNum = 0;
         for (final view in WidgetsBinding.instance.platformDispatcher.views) {
           final existedBeforeUsOnMetricsChanged =
               view.platformDispatcher.onMetricsChanged;
           view.platformDispatcher.onMetricsChanged = () {
             if (_Logger.hookLogging)
               _Logger.log(
-                  'CustomMouseCursor.onMetricsChanged() view[$viewNum].platformdispatcher.onMetricsChanged() !!!!! existedBeforeUsOnMetricsChanged=$existedBeforeUsOnMetricsChanged');
+                  'CustomMouseCursor.onMetricsChanged() view[].platformdispatcher.onMetricsChanged() !!!!! existedBeforeUsOnMetricsChanged=$existedBeforeUsOnMetricsChanged');
             if (_Logger.hookLogging)
               _Logger.log(
                   'View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
@@ -1666,7 +1665,6 @@ class CustomMouseCursor extends MouseCursor {
             }
             onMetricsChanged();
           };
-          viewNum++;
         }
       }
     }
