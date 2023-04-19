@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chalkdart/chalk.dart';
 
-
 /// Whether to use OLD FLUTTER deprecated APIS for image decoding - this is required for using stable channel ?
 const bool _oldFlutterAPIS = false;
-  
+
 class _Logger {
+  static const logging = false; // set to false for release
+  static const hookLogging = true; // set to false for release
   static void log(String message) {
     debugPrint(message);
   }
@@ -33,10 +34,10 @@ class _Logger {
 ///
 /// The [asset] and [exactasset] static methods can be use to create custom cursors from flutter
 /// assets.
-/// 
+///
 /// The [icon] static method can be used to create custom cursors from any flutter [IconData].
-/// 
-/// The [image] static method can be used to create icon's from [ui.Image] objects. 
+///
+/// The [image] static method can be used to create icon's from [ui.Image] objects.
 /// The image will be scaled to create cursors for any other encounted devicePixelRatop.
 /// The image is supplied with it's native devicePixelRatio.  The image should have a devicePixelRatio
 /// large enough that it is scaled down for most encountered devicePixelRatios. (at least 2.0 typically).
@@ -346,8 +347,9 @@ class CustomMouseCursor extends MouseCursor {
     String? package,
   }) async {
     double exactAssetDevicePixelRatio = nativeDevicePixelRatio;
-    _Logger.log(
-        chalk.green('\n\n${useExactAssetImage ? 'EXACT' : ''}Asset() assetName=$assetName useExactAssetImage=$useExactAssetImage nativeDevicePixelRatio=$nativeDevicePixelRatio existingCursorToUpdate=$existingCursorToUpdate'));
+    if (_Logger.logging)
+      _Logger.log(chalk.green(
+          '\n\n${useExactAssetImage ? 'EXACT' : ''}Asset() assetName=$assetName useExactAssetImage=$useExactAssetImage nativeDevicePixelRatio=$nativeDevicePixelRatio existingCursorToUpdate=$existingCursorToUpdate'));
     // If we have a ImageConfiguration object already from didChangeDependencies() being called
     // use that to use AssetImage to do a DPI aware loading of the pointer
     AssetBundleImageProvider? assetBundleImageProvider;
@@ -364,21 +366,26 @@ class CustomMouseCursor extends MouseCursor {
           : AssetImage(assetName, bundle: bundle, package: package);
       assetAwareKey =
           await assetBundleImageProvider.obtainKey(_lastImageConfiguration!);
-      _Logger.log(
-          '  _lastImageConfiguration returned DPR of ${_lastImageConfiguration!.devicePixelRatio} for system');
-      _Logger.log(
-          '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  _lastImageConfiguration returned DPR of ${_lastImageConfiguration!.devicePixelRatio} for system');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
 
       if (nativeDevicePixelRatio != 1.0 && assetAwareKey.scale == 1.0) {
         // WE were told that the 1.0 is actually [nativeDevicePixelRatio] SO USE THAT
         //  (ExactImageAsset() will always return scale of 1.0)
         rescaleRatioRequiredForImage =
             _lastImageConfiguration!.devicePixelRatio! / nativeDevicePixelRatio;
-        _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
-        _Logger.log(
-            '  $nativeDevicePixelRatio was PASSED for native - but then _lastImageConfiguration!.devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio} and assetAwareKey.scale=${assetAwareKey.scale}');
-        _Logger.log(
-            '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
+        if (_Logger.logging) if (_Logger.logging)
+          _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
+        if (_Logger.logging) if (_Logger.logging)
+          _Logger.log(
+              '  $nativeDevicePixelRatio was PASSED for native - but then _lastImageConfiguration!.devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio} and assetAwareKey.scale=${assetAwareKey.scale}');
+        if (_Logger.logging) if (_Logger.logging)
+          _Logger.log(
+              '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
       } else {
         // At this point it has chosen *SOME* scale of image to use - this MIGHT NOT BE the devicePixelRatio exactly,
         //  so we will need to scale to that..
@@ -386,12 +393,14 @@ class CustomMouseCursor extends MouseCursor {
             _lastImageConfiguration!.devicePixelRatio! / assetAwareKey.scale;
       }
 
-      _Logger.log(
-          '  Using lastImageConfiguration got rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage  name=${assetAwareKey.name} scale=${assetAwareKey.scale}');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  Using lastImageConfiguration got rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage  name=${assetAwareKey.name} scale=${assetAwareKey.scale}');
       if (nativeDevicePixelRatio !=
           _lastImageConfiguration!.devicePixelRatio!) {
-        _Logger.log(
-            '  CHANGING NATIVE PIXEL RATIO (OLD DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY)');
+        if (_Logger.logging) if (_Logger.logging)
+          _Logger.log(
+              '  CHANGING NATIVE PIXEL RATIO (OLD DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY)');
         double adjustHotsToNativeDPRChange =
             _lastImageConfiguration!.devicePixelRatio! / nativeDevicePixelRatio;
         hotX = (hotX * adjustHotsToNativeDPRChange).round();
@@ -400,8 +409,9 @@ class CustomMouseCursor extends MouseCursor {
         if (!useExactAssetImage) {
           exactAssetDevicePixelRatio = nativeDevicePixelRatio;
         }
-        _Logger.log(
-            '  UPDATED values DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY   exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
+        if (_Logger.logging) if (_Logger.logging)
+          _Logger.log(
+              '  UPDATED values DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY   exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
       }
       //
       assetName = assetAwareKey.name;
@@ -412,7 +422,8 @@ class CustomMouseCursor extends MouseCursor {
 
     // NOW we have decide on the name we will use then check for existing cursor
     if (_cursorCacheOfAllCreatedCursors.containsKey(assetName)) {
-      _Logger.log('  Found cursor in cache with assetname =$assetName');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log('  Found cursor in cache with assetname =$assetName');
       return _cursorCacheOfAllCreatedCursors[assetName]!;
     }
 
@@ -425,10 +436,12 @@ class CustomMouseCursor extends MouseCursor {
         rawUint8,
         rescaleRatioRequiredForImage: rescaleRatioRequiredForImage);
 
-    _Logger.log(
-        '  Loaded Asset image width=${uiImage.width} height=${uiImage.height}');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  Loaded Asset image width=${uiImage.width} height=${uiImage.height}');
 
-    final cursor = await _commonCursorImageInstaller(uiImage, hotX, hotY, nativeDevicePixelRatio,
+    final cursor = await _commonCursorImageInstaller(
+        uiImage, hotX, hotY, nativeDevicePixelRatio,
         key: assetName,
         originStory: useExactAssetImage
             ? _CustomMouseCursorCreationType.exactasset
@@ -438,8 +451,9 @@ class CustomMouseCursor extends MouseCursor {
     cursor._assetBundleImageProvider = assetBundleImageProvider;
     cursor._exactAssetDevicePixelRatio = exactAssetDevicePixelRatio;
 
-    _Logger.log(
-        '  ALMOST DONE ABOUT TO CHECK _createDevicePixelRatio1xVersion IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  nativeDevicePixelRatio=$nativeDevicePixelRatio');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  ALMOST DONE ABOUT TO CHECK _createDevicePixelRatio1xVersion IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  nativeDevicePixelRatio=$nativeDevicePixelRatio');
     if (kIsWeb && _useURLDataURICursorCSS && nativeDevicePixelRatio != 1.0) {
       // For web platform when using legacy URL datauri css cursors we need to always include
       // a 1.0 DPR version of the cursor.
@@ -455,26 +469,34 @@ class CustomMouseCursor extends MouseCursor {
   /// used again.  The loaded image is scaled to be the exact DPR requested by [newDevicePixelRatio] if
   /// necessary.
   Future<void> _updateAssetToNewDpi(double newDevicePixelRatio) async {
-    assert(originStory == _CustomMouseCursorCreationType.asset ||
-        originStory == _CustomMouseCursorCreationType.exactasset, '_updateAssetToNewDpi() called on non asset cursor ($originStory key=$key)');
-    
-    _Logger.log(chalk.brightGreen('ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) ')); 
+    assert(
+        originStory == _CustomMouseCursorCreationType.asset ||
+            originStory == _CustomMouseCursorCreationType.exactasset,
+        '_updateAssetToNewDpi() called on non asset cursor ($originStory key=$key)');
+    assert(_assetBundleImageProvider != null);
+
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(chalk.brightGreen(
+          'ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) '));
+
     bool useExactAssetImage =
         (originStory == _CustomMouseCursorCreationType.exactasset);
-    AssetBundleImageKey? assetAwareKey;
-    double rescaleRatioRequiredForImage = 0;
+
+    late final double rescaleRatioRequiredForImage;
     // call and get an ImageConfiguration if we don't have one yet
     final forcedImageConfig =
         _createLocalImageConfigurationWithOrWithoutContext(
             forceDevicePixelRatio: newDevicePixelRatio);
 
-    AssetBundleImageProvider assetBundleImageProvider =
-        _assetBundleImageProvider!;
-    assetAwareKey = await assetBundleImageProvider.obtainKey(forcedImageConfig);
-    _Logger.log(
-        '  forcedImageConfig returned DPR of ${forcedImageConfig.devicePixelRatio} for system');
-    _Logger.log(
-        '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
+    final assetAwareKey =
+        await _assetBundleImageProvider!.obtainKey(forcedImageConfig);
+
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  forcedImageConfig returned DPR of ${forcedImageConfig.devicePixelRatio} for system');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
 
     if (useExactAssetImage &&
         nativeDevicePixelRatio != 1.0 &&
@@ -484,11 +506,14 @@ class CustomMouseCursor extends MouseCursor {
       //  ratio we were told the image representing in the call to exactAsset().
       rescaleRatioRequiredForImage =
           newDevicePixelRatio / _exactAssetDevicePixelRatio!;
-      _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
-      _Logger.log(
-          '  newDevicePixelRatio=$newDevicePixelRatio (orginally we were told nativeDevicePixelRatio=$nativeDevicePixelRatio) was PASSED for native - but then newDevicePixelRatio=$newDevicePixelRatio and assetAwareKey.scale=${assetAwareKey.scale}');
-      _Logger.log(
-          '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  newDevicePixelRatio=$newDevicePixelRatio (orginally we were told nativeDevicePixelRatio=$nativeDevicePixelRatio) was PASSED for native - but then newDevicePixelRatio=$newDevicePixelRatio and assetAwareKey.scale=${assetAwareKey.scale}');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  made  rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage');
     } else {
       // At this point it has chosen *SOME* scale of image to use - this MIGHT NOT BE the devicePixelRatio exactly,
       //  so we will need to scale to that..
@@ -502,8 +527,9 @@ class CustomMouseCursor extends MouseCursor {
     double hotX = hotXAtNativeDevicePixelRatio * adjustHotSpotRatio;
     double hotY = hotYAtNativeDevicePixelRatio * adjustHotSpotRatio;
 
-    _Logger.log(
-        '  _updateAssetToNewDpi() updating by LOADING asset ${assetAwareKey.name} scale=${assetAwareKey.scale} rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage adjusted adjustHotSpotRatio=$adjustHotSpotRatio hotX=$hotX hotY=$hotY');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  _updateAssetToNewDpi() updating by LOADING asset ${assetAwareKey.name} scale=${assetAwareKey.scale} rescaleRatioRequiredForImage=$rescaleRatioRequiredForImage adjusted adjustHotSpotRatio=$adjustHotSpotRatio hotX=$hotX hotY=$hotY');
 
     final rawAssetImageBytes = await rootBundle.load(assetAwareKey.name);
 
@@ -513,11 +539,14 @@ class CustomMouseCursor extends MouseCursor {
         rawUint8,
         rescaleRatioRequiredForImage: rescaleRatioRequiredForImage);
 
-    _Logger.log(
-        '  _updateAssetToNewDpi() UPDATE Asset loaded image width=${uiImage.width} height=${uiImage.height}');
-    _Logger.log(
-        '  calling image() with EXISTING ASSET CURSOR newDevicePixelRatio=$newDevicePixelRatio');
-    await _commonCursorImageInstaller(uiImage, hotX.round(), hotY.round(), newDevicePixelRatio,
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  _updateAssetToNewDpi() UPDATE Asset loaded image width=${uiImage.width} height=${uiImage.height}');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  calling image() with EXISTING ASSET CURSOR newDevicePixelRatio=$newDevicePixelRatio');
+    await _commonCursorImageInstaller(
+        uiImage, hotX.round(), hotY.round(), newDevicePixelRatio,
         key: key, originStory: originStory, existingCursorToUpdate: this);
   }
 
@@ -665,17 +694,20 @@ class CustomMouseCursor extends MouseCursor {
       color: color,
       shadows: shadows,
     );
-    double currentDevicePixelRatio = _getCurrentDevicePixelRatioFromLastConfigOrWindow();
+    double currentDevicePixelRatio =
+        _getCurrentDevicePixelRatioFromLastConfigOrWindow();
     if (currentDevicePixelRatio != 1.0) {
-      _Logger.log(
-          chalk.color.pink('\n.\n;\n,\nEntering ICON creation currentDevicePixelRatio=$currentDevicePixelRatio'));
-      _Logger.log('  Must adjust size=$size   hotX=$hotX   hotY=$hotY ');
-      double adjustRatio =
-          currentDevicePixelRatio / 1.0;
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(chalk.color.pink(
+            '\n \n  \n   \nEntering ICON creation currentDevicePixelRatio=$currentDevicePixelRatio'));
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log('  Must adjust size=$size   hotX=$hotX   hotY=$hotY ');
+      double adjustRatio = currentDevicePixelRatio / 1.0;
       size = size * adjustRatio;
       hotX = (hotX * adjustRatio).round();
       hotY = (hotY * adjustRatio).round();
-      _Logger.log('  ADJUSTED adjust size=$size   hotX=$hotX   hotY=$hotY ');
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log('  ADJUSTED adjust size=$size   hotX=$hotX   hotY=$hotY ');
     }
 
     ui.Image iconImage = _createImageFromIconSync(icon,
@@ -694,8 +726,9 @@ class CustomMouseCursor extends MouseCursor {
 
     cursor._iconCreationInfo = iconCreationInfo;
 
-    _Logger.log(
-        '  About to check for NEED TO CREATE 1x for web - IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  currentDevicePixelRatio=$currentDevicePixelRatio');
+    if (_Logger.logging) if (_Logger.logging)
+      _Logger.log(
+          '  About to check for NEED TO CREATE 1x for web - IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  currentDevicePixelRatio=$currentDevicePixelRatio');
     if (kIsWeb && _useURLDataURICursorCSS && currentDevicePixelRatio != 1.0) {
       // For web platform when using legacy URL datauri css cursors we need to always include
       // a 1.0 DPR version of the cursor.
@@ -707,7 +740,8 @@ class CustomMouseCursor extends MouseCursor {
 
   /// Internal handler for updating custom icon cursors in response to changes to the system's devicePixelRatio.
   Future<void> _updateIconToNewDpi(double newDevicePixelRatio) async {
-    assert(originStory == _CustomMouseCursorCreationType.icon, '_updateIconToNewDpi() called on non icon cursor');
+    assert(originStory == _CustomMouseCursorCreationType.icon,
+        '_updateIconToNewDpi() called on non icon cursor');
 
     if (_iconCreationInfo != null) {
       double scaleRatio = newDevicePixelRatio;
@@ -717,8 +751,9 @@ class CustomMouseCursor extends MouseCursor {
       int newHotY =
           (_iconCreationInfo!.hotYInLogicalPixels * scaleRatio).round();
 
-      _Logger.log(
-          chalk.cyan('  updateIconToNewDpi() making icon at newSize=$newSize   (scaleRatio=$scaleRatio)'));
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(chalk.cyan(
+            '  updateIconToNewDpi() making icon at newSize=$newSize   (scaleRatio=$scaleRatio)'));
 
       ui.Image iconImage = _createImageFromIconSync(_iconCreationInfo!.icon,
           size: newSize,
@@ -728,16 +763,18 @@ class CustomMouseCursor extends MouseCursor {
           iconGrade: _iconCreationInfo!.grade,
           iconOpticalSize: _iconCreationInfo!.opticalSize,
           shadows: _iconCreationInfo!.shadows);
-      _Logger.log(
-          '  CALLING image with EXISTING ICON IMAGE TO UPDATE WITH NEW icon Image newDevicePixelRatio=$newDevicePixelRatio');
-      _commonCursorImageInstaller(iconImage, newHotX, newHotY, newDevicePixelRatio,
+      if (_Logger.logging) if (_Logger.logging)
+        _Logger.log(
+            '  CALLING image with EXISTING ICON IMAGE TO UPDATE WITH NEW icon Image newDevicePixelRatio=$newDevicePixelRatio');
+      _commonCursorImageInstaller(
+          iconImage, newHotX, newHotY, newDevicePixelRatio,
           originStory: _CustomMouseCursorCreationType.icon,
           existingCursorToUpdate: this);
     }
   }
 
-  /// Creates a [CustomMouseCursor] from the supplied ui.Image buffer. 
-  /// The [image] static method can be used to create icon's from [ui.Image] objects. 
+  /// Creates a [CustomMouseCursor] from the supplied ui.Image buffer.
+  /// The [image] static method can be used to create icon's from [ui.Image] objects.
   /// The image will be scaled to create cursors for any other encounted devicePixelRatop.
   /// The image is supplied with it's native devicePixelRatio.  The image should have a devicePixelRatio
   /// large enough that it is scaled down for most encountered devicePixelRatios. (at least 2.0 typically).
@@ -748,28 +785,32 @@ class CustomMouseCursor extends MouseCursor {
   /// If [addImage] will be being called then pass [finalizeForCurrentDPR]=false to prevent the cursor
   /// from having a image made for the current DPR.
   static Future<CustomMouseCursor> image(
-    ui.Image uiImage,
-    {
-    int hotX=0,
-    int hotY=0,
-    double thisImagesDevicePixelRatio=1.0,
-    bool finalizeForCurrentDPR=true,
+    ui.Image uiImage, {
+    int hotX = 0,
+    int hotY = 0,
+    double thisImagesDevicePixelRatio = 1.0,
+    bool finalizeForCurrentDPR = true,
     String? key,
-    }
-  ) async {
-    _Logger.log(chalk.color.teal('image() - creating custom cursor from ${thisImagesDevicePixelRatio}x image'));
+  }) async {
+    if (_Logger.logging)
+      _Logger.log(chalk.color.teal(
+          'image() - creating custom cursor from ${thisImagesDevicePixelRatio}x image'));
 
-    final cursor = await _commonCursorImageInstaller( uiImage, hotX, hotY,  thisImagesDevicePixelRatio );
+    final cursor = await _commonCursorImageInstaller(
+        uiImage, hotX, hotY, thisImagesDevicePixelRatio);
 
-    _Logger.log(
-        '  About to check for NEED TO CREATE 1x for web - IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio');
-    if (kIsWeb && _useURLDataURICursorCSS && thisImagesDevicePixelRatio != 1.0) {
+    if (_Logger.logging)
+      _Logger.log(
+          '  About to check for NEED TO CREATE 1x for web - IS WEB=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio');
+    if (kIsWeb &&
+        _useURLDataURICursorCSS &&
+        thisImagesDevicePixelRatio != 1.0) {
       // For web platform when using legacy URL datauri css cursors we need to always include
       // a 1.0 DPR version of the cursor.
       await _createDevicePixelRatio1xVersion(cursor);
     }
 
-    if(finalizeForCurrentDPR) {
+    if (finalizeForCurrentDPR) {
       await cursor.finalizeImages();
     }
     return cursor;
@@ -778,44 +819,51 @@ class CustomMouseCursor extends MouseCursor {
   /// Adds an additional image (at additional DPR) to the custom cursor.  This allows supplying additional images at
   /// other DevicePixelRatios.
   /// This can also replace existing dpr images previously set for this cursor.
-  Future<void> addImage( ui.Image uiImage, {
-      double thisImagesDevicePixelRatio=1.0,
-    }
-  ) async {
+  Future<void> addImage(
+    ui.Image uiImage, {
+    double thisImagesDevicePixelRatio = 1.0,
+  }) async {
     if (originStory != _CustomMouseCursorCreationType.image) {
       throw ('addImage() called on CustomMouseCursor that was not created via image() ($originStory)');
     }
-    _Logger.log(chalk.color.lime('addImage() - adding ${thisImagesDevicePixelRatio}x image to custom cursor'));
-    double rescaleRatioRequiredForImage = thisImagesDevicePixelRatio / nativeDevicePixelRatio;
-    int hotX = (hotXAtNativeDevicePixelRatio * rescaleRatioRequiredForImage).round();
-    int hotY = (hotYAtNativeDevicePixelRatio * rescaleRatioRequiredForImage).round();
+    if (_Logger.logging)
+      _Logger.log(chalk.color.lime(
+          'addImage() - adding ${thisImagesDevicePixelRatio}x image to custom cursor'));
+    double rescaleRatioRequiredForImage =
+        thisImagesDevicePixelRatio / nativeDevicePixelRatio;
+    int hotX =
+        (hotXAtNativeDevicePixelRatio * rescaleRatioRequiredForImage).round();
+    int hotY =
+        (hotYAtNativeDevicePixelRatio * rescaleRatioRequiredForImage).round();
 
     int width = uiImage.width;
     int height = uiImage.height;
 
     // get the uiImage as BGRA (for windows) or PNG for all other platforms.
     final imageBuffer = await _getImageBufferInPlatformSpecificFormat(uiImage);
-    
+
     if (!kIsWeb) {
       _dprBitmapCache[thisImagesDevicePixelRatio] =
-            _CustomMouseCursorDPRBitmapCache(
-                imageBuffer, null, width, height, hotX, hotY);
+          _CustomMouseCursorDPRBitmapCache(
+              imageBuffer, null, width, height, hotX, hotY);
     } else {
       // for the web we update this cursor's key with the new cursor definition that will now INCLUDE this
       // image definition as well.
       final base64ImageDataUri =
-            _createDataURIForImage(imageBuffer, thisImagesDevicePixelRatio);
-        // for the web the registeredKey *IS* the css cursor data-uri defining this cursor
+          _createDataURIForImage(imageBuffer, thisImagesDevicePixelRatio);
+      // for the web the registeredKey *IS* the css cursor data-uri defining this cursor
       key = _createCursorCSSDefinition(
-            base64ImageDataUri, hotX, hotY, thisImagesDevicePixelRatio, null);
-      
+          base64ImageDataUri, hotX, hotY, thisImagesDevicePixelRatio, null);
+
       // Cache the base64ImageDataURI for possible later rebuilds of the cursor defintion with even more additional
       // images.
-      _dprBitmapCache[thisImagesDevicePixelRatio] = _CustomMouseCursorDPRBitmapCache(
-                null, base64ImageDataUri, width, height, hotX, hotY);
+      _dprBitmapCache[thisImagesDevicePixelRatio] =
+          _CustomMouseCursorDPRBitmapCache(
+              imageBuffer, base64ImageDataUri, width, height, hotX, hotY);
     }
-    _Logger.log(
-        '  addImage() SCALED hotspot by dpr/$nativeDevicePixelRatio => adjustHotSpotRatio=$rescaleRatioRequiredForImage  (changed to hotX=$hotX hotY=$hotY)');
+    if (_Logger.logging)
+      _Logger.log(
+          '  addImage() SCALED hotspot by dpr/$nativeDevicePixelRatio => adjustHotSpotRatio=$rescaleRatioRequiredForImage  (changed to hotX=$hotX hotY=$hotY)');
   }
 
   /// Adds an additional image (at additional DPR) to the custom cursor.  This allows supplying additional images at
@@ -825,46 +873,58 @@ class CustomMouseCursor extends MouseCursor {
     if (originStory != _CustomMouseCursorCreationType.image) {
       throw ('finalizeImages() called on CustomMouseCursor that was not created via image() ($originStory)');
     }
-    double currentDevicePixelRatio = _getCurrentDevicePixelRatioFromLastConfigOrWindow();
+    double currentDevicePixelRatio =
+        _getCurrentDevicePixelRatioFromLastConfigOrWindow();
     if (currentCursorDevicePixelRatio != currentDevicePixelRatio) {
-      _Logger.log('  finalizeImages() Creating image icon version for current DPR of $currentDevicePixelRatio');
+      if (_Logger.logging)
+        _Logger.log(
+            '  finalizeImages() Creating image icon version for current DPR of $currentDevicePixelRatio');
       await _updateImageToNewDpi(currentDevicePixelRatio);
     }
   }
 
   /// Internal handler for updating custom image cursors in response to changes to the system's devicePixelRatio.
   Future<void> _updateImageToNewDpi(double newDevicePixelRatio) async {
-    assert(originStory == _CustomMouseCursorCreationType.image, '_updateImageToNewDpi() called on non image cursor ($originStory key=$key)');
+    assert(originStory == _CustomMouseCursorCreationType.image,
+        '_updateImageToNewDpi() called on non image cursor ($originStory key=$key)');
 
-    _Logger.log(chalk.brightGreen('ENTERING _updateImageToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) ')); 
+    if (_Logger.logging)
+      _Logger.log(chalk.brightGreen(
+          'ENTERING _updateImageToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) '));
 
     // we at least need the original image in the cache so we can scale a new one..
-    if(!_dprBitmapCache.containsKey(nativeDevicePixelRatio)) {
+    if (!_dprBitmapCache.containsKey(nativeDevicePixelRatio)) {
       throw ('_updateImageToNewDpi() could not find dpr entry of $nativeDevicePixelRatio to retreive original bitmap');
     }
 
     // Check to see if we have THIS DPR available in the cache and switch if possible...
-    if(!switchToCachedDevicePixelRatioIfPossible(newDevicePixelRatio)) {
+    if (!switchToCachedDevicePixelRatioIfPossible(newDevicePixelRatio)) {
       // OTHERWISE we were NOT able to find the DPR in the cache so create it
 
       // HOT SPOTS where orginally STORED at [nativeDevicePixelRatio] DPR (which may have changed from what user
       // passed to original asset()/exactasset() call), so we must adjust them with [nativeDevicePixelRatio]
       // from there to the [newDevicePixelRatio]
-      double rescaleRatioRequiredForImage = newDevicePixelRatio / nativeDevicePixelRatio;
+      double rescaleRatioRequiredForImage =
+          newDevicePixelRatio / nativeDevicePixelRatio;
       double hotX = hotXAtNativeDevicePixelRatio * rescaleRatioRequiredForImage;
       double hotY = hotYAtNativeDevicePixelRatio * rescaleRatioRequiredForImage;
 
-      _Logger.log('  nativeDevicePixelRatio=$nativeDevicePixelRatio  cache has _dprBitmapCache=$_dprBitmapCache');
-      _Logger.log(
+      if (_Logger.logging)
+        _Logger.log(
+            '  nativeDevicePixelRatio=$nativeDevicePixelRatio  cache has _dprBitmapCache=$_dprBitmapCache');
+      if (_Logger.logging)
+        _Logger.log(
             '  _updateImageToNewDpi() updating by SCALING image/hotspot by adjustHotSpotRatio=$rescaleRatioRequiredForImage  (changed to hotX=$hotX hotY=$hotY)');
 
       late final ui.Image uiImage;
       if (!kIsWeb && Platform.isWindows) {
         // On windows our buffer is in raw BGRA format..
         final cacheEntry = _dprBitmapCache[nativeDevicePixelRatio]!;
-        final rawBgraUint8 = cacheEntry.imageBuffer!;
+        final rawBgraUint8 = cacheEntry.imageBuffer;
 
-        _Logger.log(chalk.red.onBrightWhite('about to use decodeImageFromPixels() to decode BRGA buffer and scale'));
+        if (_Logger.logging)
+          _Logger.log(chalk.red.onBrightWhite(
+              'about to use decodeImageFromPixels() to decode BRGA buffer and scale'));
 
         // Decode our raw BGRA pixel buffer back to a uiImage.
         final Completer<ui.Image> completer = Completer<ui.Image>();
@@ -874,28 +934,44 @@ class CustomMouseCursor extends MouseCursor {
           cacheEntry.height,
           PixelFormat.bgra8888,
           completer.complete,
-          targetWidth: (cacheEntry.width*rescaleRatioRequiredForImage).round(),
-          targetHeight: (cacheEntry.height*rescaleRatioRequiredForImage).round(),
-          allowUpscaling:true,
+          targetWidth:
+              (cacheEntry.width * rescaleRatioRequiredForImage).round(),
+          targetHeight:
+              (cacheEntry.height * rescaleRatioRequiredForImage).round(),
+          allowUpscaling: true,
         );
         uiImage = await completer.future;
-        _Logger.log(chalk.red.onBrightWhite('DONE WITH decodeImageFromPixels() width=${uiImage.width} height=${uiImage.height}'));
+        if (_Logger.logging)
+          _Logger.log(chalk.red.onBrightWhite(
+              'DONE WITH decodeImageFromPixels() width=${uiImage.width} height=${uiImage.height}'));
       } else {
+        if (_Logger.logging)
+          _Logger.log(chalk.red(
+              '_dprBitmapCache.containsKey(nativeDevicePixelRatio)=${_dprBitmapCache.containsKey(nativeDevicePixelRatio)}'));
 
-        final rawUint8 = _dprBitmapCache[nativeDevicePixelRatio]!.imageBuffer!;
+        final rawUint8 = _dprBitmapCache[nativeDevicePixelRatio]!.imageBuffer;
 
-        _Logger.log(chalk.red.onBrightWhite('about to call _createUIImageFromUint8ListBufferPossiblyScale()'));
+        if (_Logger.logging)
+          _Logger.log(chalk.red.onBrightWhite(
+              'about to call _createUIImageFromUint8ListBufferPossiblyScale()'));
         uiImage = await _createUIImageFromPNGUint8ListBufferAndPossiblyScale(
             rawUint8,
             rescaleRatioRequiredForImage: rescaleRatioRequiredForImage);
-        _Logger.log(chalk.red.onBrightWhite('BACK FROM call to _createUIImageFromUint8ListBufferPossiblyScale()'));
+        if (_Logger.logging)
+          _Logger.log(chalk.red.onBrightWhite(
+              'BACK FROM call to _createUIImageFromUint8ListBufferPossiblyScale()'));
       }
-      _Logger.log(
-          '  _updateImageToNewDpi() UPDATE Asset loaded image width=${uiImage.width} height=${uiImage.height}');
-      _Logger.log(
-          '  calling image() with EXISTING ASSET CURSOR newDevicePixelRatio=$newDevicePixelRatio');
-      await _commonCursorImageInstaller(uiImage, hotX.round(), hotY.round(), newDevicePixelRatio,
-          key: key, originStory: _CustomMouseCursorCreationType.image, existingCursorToUpdate: this);
+      if (_Logger.logging)
+        _Logger.log(
+            '  _updateImageToNewDpi() UPDATE Asset loaded image width=${uiImage.width} height=${uiImage.height}');
+      if (_Logger.logging)
+        _Logger.log(
+            '  calling image() with EXISTING ASSET CURSOR newDevicePixelRatio=$newDevicePixelRatio');
+      await _commonCursorImageInstaller(
+          uiImage, hotX.round(), hotY.round(), newDevicePixelRatio,
+          key: key,
+          originStory: _CustomMouseCursorCreationType.image,
+          existingCursorToUpdate: this);
     }
   }
 
@@ -925,8 +1001,9 @@ class CustomMouseCursor extends MouseCursor {
     /// image.
     CustomMouseCursor? existingCursorToUpdate,
   }) async {
-    _Logger.log(
-        chalk.brightWhite('ENTERING _commonCursorImageInstaller() with existingCursorToUpdate=$existingCursorToUpdate'));
+    if (_Logger.logging)
+      _Logger.log(chalk.brightWhite(
+          'ENTERING _commonCursorImageInstaller() with existingCursorToUpdate=$existingCursorToUpdate'));
     // todo: tmm - Maybe not best place but ensure we have callbacks to detect DevicePixelRatio changes ?
     _setupViewsOnMetricChangedCallbacks();
 
@@ -937,25 +1014,30 @@ class CustomMouseCursor extends MouseCursor {
     // If we have a ImageConfiguration object already from didChangeDependencies() being called
     // use that to use AssetImage to do a DPI aware loading of the pointer
     if (_lastImageConfiguration != null) {
-      _Logger.log(
-          '  Using lastImageConfiguration devicePixelRatio = ${_lastImageConfiguration?.devicePixelRatio ?? 'ImageConfiguration MISSING DEVICEPIXELRATIO'}');
-      currentDevicePixelRatio = _getCurrentDevicePixelRatioFromLastConfigOrWindow();
-    }  else {
+      if (_Logger.logging)
+        _Logger.log(
+            '  Using lastImageConfiguration devicePixelRatio = ${_lastImageConfiguration?.devicePixelRatio ?? 'ImageConfiguration MISSING DEVICEPIXELRATIO'}');
+      currentDevicePixelRatio =
+          _getCurrentDevicePixelRatioFromLastConfigOrWindow();
+    } else {
       // Otherise get the device pixel ratio for current window.
       // todo: tmm fix this deprecated code once there is a common way in stable
       currentDevicePixelRatio = _getCurrentDevicePixelRatioFromWindow();
-      _Logger.log(
-        '  _commonCursorImageInstaller() existingCursorToUpdate=$existingCursorToUpdate  Current currentDevicePixelRatio from WidgetsBinding! devicePixelRatio = $currentDevicePixelRatio');
+      if (_Logger.logging)
+        _Logger.log(
+            '  _commonCursorImageInstaller() existingCursorToUpdate=$existingCursorToUpdate  Current currentDevicePixelRatio from WidgetsBinding! devicePixelRatio = $currentDevicePixelRatio');
     }
 
     // If a different DPR was sent for the image other that does NOT match the [currentDevicePixelRatio] then
     // the passed [thisImagesDevicePixelRatio] will be used.  (We assume caller knows what they want)
     if (currentDevicePixelRatio != thisImagesDevicePixelRatio) {
-      _Logger.log(
-          '  !!!!!! In _commonCursorImageInstaller() Creation and thisImagesDevicePixelRatio DPR ($currentDevicePixelRatio) != NATIVE ($thisImagesDevicePixelRatio)');
+      if (_Logger.logging)
+        _Logger.log(
+            '  !!!!!! In _commonCursorImageInstaller() Creation and thisImagesDevicePixelRatio DPR ($currentDevicePixelRatio) != NATIVE ($thisImagesDevicePixelRatio)');
       currentDevicePixelRatio = thisImagesDevicePixelRatio;
-      _Logger.log(
-          '  CHANGED CURRENT TO MATCH thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio FOR THIS CREATION');
+      if (_Logger.logging)
+        _Logger.log(
+            '  CHANGED CURRENT TO MATCH thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio FOR THIS CREATION');
     }
 
     // get the uiImage as BGRA (for windows) or PNG for all other platforms.
@@ -963,7 +1045,8 @@ class CustomMouseCursor extends MouseCursor {
 
     if (existingCursorToUpdate == null) {
       // CREATING A NEW CURSOR
-      _Logger.log('  in _commonCursorImageInstaller() CREATING NEW CURSOR');
+      if (_Logger.logging)
+        _Logger.log('  in _commonCursorImageInstaller() CREATING NEW CURSOR');
       // if no key was passed in we generate a random unique key
       key ??= generateUniqueKey();
 
@@ -993,10 +1076,11 @@ class CustomMouseCursor extends MouseCursor {
         // Cache the base64ImageDataURI
         cursor._dprBitmapCache[thisImagesDevicePixelRatio] =
             _CustomMouseCursorDPRBitmapCache(
-                null, base64ImageDataUri, width, height, hotX, hotY);
+                imageBuffer, base64ImageDataUri, width, height, hotX, hotY);
 
-        _Logger.log(
-            'WEB Added TO CACHE for thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio  !!');
+        if (_Logger.logging)
+          _Logger.log(
+              'WEB Added TO CACHE for thisImagesDevicePixelRatio=$thisImagesDevicePixelRatio  !!');
         //NO LONGER NEEDED//cursor._dprCSSCursorCache[thisImagesDevicePixelRatio] = registeredKey;
       }
 
@@ -1009,7 +1093,9 @@ class CustomMouseCursor extends MouseCursor {
         the cursor.
       */
       key = existingCursorToUpdate.key;
-      _Logger.log('  WE ARE in _commonCursorImageInstaller() UPDATING the backing image key=$key ');
+      if (_Logger.logging)
+        _Logger.log(
+            '  WE ARE in _commonCursorImageInstaller() UPDATING the backing image key=${_debugPrintPossibleCSSDataUriString(key)} ');
 
       // WE ARE UPDATING an existing cursor's backing image, so delete previous image and
       if (!kIsWeb) {
@@ -1031,7 +1117,7 @@ class CustomMouseCursor extends MouseCursor {
             _createDataURIForImage(imageBuffer, thisImagesDevicePixelRatio);
         existingCursorToUpdate._dprBitmapCache[thisImagesDevicePixelRatio] =
             _CustomMouseCursorDPRBitmapCache(
-                null, base64ImageDataUri, width, height, hotX, hotY);
+                imageBuffer, base64ImageDataUri, width, height, hotX, hotY);
 
         existingCursorToUpdate.key = _createCursorCSSDefinition(
             base64ImageDataUri,
@@ -1039,10 +1125,6 @@ class CustomMouseCursor extends MouseCursor {
             hotY,
             thisImagesDevicePixelRatio,
             existingCursorToUpdate._dprBitmapCache);
-
-        /*NOLONGER NEEDED//existingCursorToUpdate._dprCSSCursorCache[thisImagesDevicePixelRatio] =
-            existingCursorToUpdate.key;
-        */
       }
       existingCursorToUpdate.currentCursorDevicePixelRatio =
           thisImagesDevicePixelRatio;
@@ -1052,7 +1134,8 @@ class CustomMouseCursor extends MouseCursor {
 
   // Calls the approriate updateXXXXToNewDpi() method depending on this cursor's type ([originStory]).
   Future<void> _updateCursorToNewDpr(double newDevicePixelRatio) async {
-    _Logger.log(
+    if (_Logger.logging)
+      _Logger.log(
           '    UPDATING $originStory CURSOR dpr - CALLING cursor.updateXXXXToNewDpi( $newDevicePixelRatio );');
     if (originStory == _CustomMouseCursorCreationType.asset ||
         originStory == _CustomMouseCursorCreationType.exactasset) {
@@ -1067,12 +1150,18 @@ class CustomMouseCursor extends MouseCursor {
   // Switch this cursor to a different DPR if it is found in the cache.  Returns
   // true if [desiredDevicePixelRatio] is in the cache and the switch is made.
   // false if [desiredDevicePixelRatio] is not found in the cache.
-  bool switchToCachedDevicePixelRatioIfPossible(double desiredDevicePixelRatio) {
-      // First we check this cursors DPR cache
-      // If it's in our cache then switch to the cached image for this DPR.
+  bool switchToCachedDevicePixelRatioIfPossible(
+      double desiredDevicePixelRatio) {
+    if (false && _Logger.logging)
+      _Logger.log(chalk.red(
+          'switchToCachedDevicePixelRatioIfPossible($desiredDevicePixelRatio) _dprBitmapCache.containsKey($_dprBitmapCache.containsKey(desiredDevicePixelRatio))=${_dprBitmapCache.containsKey(desiredDevicePixelRatio)}'));
+
+    // First we check this cursors DPR cache
+    // If it's in our cache then switch to the cached image for this DPR.
     if (_dprBitmapCache.containsKey(desiredDevicePixelRatio)) {
       if (!kIsWeb) {
-        _Logger.log(
+        if (_Logger.logging)
+          _Logger.log(
               '    Getting DPR $desiredDevicePixelRatio from cursors BITMAP cache!!!');
         final cachedInfo = _dprBitmapCache[desiredDevicePixelRatio]!;
         // WE ARE UPDATING an existing cursor's backing image, so delete previous image and
@@ -1080,7 +1169,7 @@ class CustomMouseCursor extends MouseCursor {
         // get new version with new dpi image
         _CustomMouseCursorPlatformInterface.registerCursor(
             key,
-            cachedInfo.imageBuffer!,
+            cachedInfo.imageBuffer,
             cachedInfo.width,
             cachedInfo.height,
             cachedInfo.hotX.toDouble(),
@@ -1088,11 +1177,12 @@ class CustomMouseCursor extends MouseCursor {
         currentCursorDevicePixelRatio = desiredDevicePixelRatio;
         return true;
       } else {
-        // For the web we just need to see if this DPR is in our cache, if it IS then we 
+        // For the web we just need to see if this DPR is in our cache, if it IS then we
         // now it is ALREADY in the existing defintion of the cursor and we can continue.
-          // WE found this DPU in the cache so we know it is included in the cursor defintion
-        _Logger.log(
-            '     Found DPR $desiredDevicePixelRatio from cursors cache!!!  WE CAN SKIP THISONE');
+        // WE found this DPU in the cache so we know it is included in the cursor defintion
+        if (_Logger.logging)
+          _Logger.log(
+              '     Found DPR $desiredDevicePixelRatio from cursors cache!!!  WE CAN SKIP THISONE');
         currentCursorDevicePixelRatio = desiredDevicePixelRatio;
         return true;
       }
@@ -1148,6 +1238,13 @@ class CustomMouseCursor extends MouseCursor {
     _useURLDataURICursorCSS = true;
   }
 
+  static String _debugPrintPossibleCSSDataUriString(String str) {
+    if (!kIsWeb || str.length <= 70) return str;
+
+    // otherwise this is a longer css style string, remove datauri bulk
+    return '${str.substring(0, 35)} ... ${str.substring(str.length - 35)}';
+  }
+
   static bool get useOnlyURLDataURICursorCSS =>
       _useURLDataURICursorCSS && !_useImageSetCSS;
   static bool _useURLDataURICursorCSS = true;
@@ -1168,8 +1265,9 @@ class CustomMouseCursor extends MouseCursor {
       int hotY,
       double nativeDevicePixelRatio,
       Map<double, _CustomMouseCursorDPRBitmapCache>? dprBitmapCache) {
-    _Logger.log(
-        chalk.bgYellow('Enteted createCursorCSSDefinition() and nativeDevicePixelRatio=$nativeDevicePixelRatio  dprBitmapCache=$dprBitmapCache'));
+    if (_Logger.logging)
+      _Logger.log(chalk.bgYellow(
+          'Entered _createCursorCSSDefinition() and nativeDevicePixelRatio=$nativeDevicePixelRatio  dprBitmapCache=$dprBitmapCache'));
 
     //TRACKINGDEBUG//base64ImageDataUri='  ADDING DPR=$nativeDevicePixelRatio ';
 
@@ -1185,21 +1283,21 @@ class CustomMouseCursor extends MouseCursor {
       dpr1Base64ImageDataUri = base64ImageDataUri;
     }
     if (_useImageSetCSS) {
-      // todo: tmm FINISH bitmap cache version
       if (dprBitmapCache != null) {
         // If we have the cache WE KNOW that the [base64ImageDataUri] is already present in the cache,
         // (because it was added to cache before this call to createCursorCSSDefinition()
         // so we don't need to worry about including [base64ImageDataUri] separately.
-        _Logger.log('  LOOPING on cache');
+        if (_Logger.logging) _Logger.log('  LOOPING on cache');
         // first get sizes and sort
         final dprs = dprBitmapCache.keys;
 
-        _Logger.log('  dpr key list = $dprs');
+        if (_Logger.logging) _Logger.log('  dpr key list = $dprs');
         // LOOP over all bitmaps in the cache and generate our multi DPR image-set defintion
         StringBuffer innerimageset = StringBuffer();
         for (final dpr in dprs) {
-          _Logger.log(
-              '  Current DRP = $dpr   datauri=${dprBitmapCache[dpr]!.base64ImageDataUri!}');
+          if (_Logger.logging)
+            _Logger.log(
+                '  Current DRP = $dpr   datauri=${_debugPrintPossibleCSSDataUriString(dprBitmapCache[dpr]!.base64ImageDataUri!)}');
           String curDprBase64ImageDataUri =
               dprBitmapCache[dpr]!.base64ImageDataUri!;
           if (innerimageset.isNotEmpty) innerimageset.write(', ');
@@ -1228,8 +1326,10 @@ class CustomMouseCursor extends MouseCursor {
     // higher DPR, and then a finally a 'pointer' fallback if the browser could handle the first 2 cases.
     final ret =
         '${imageset != '' ? '$imageset, ' : ''}${urldatauri != '' ? '$urldatauri, ' : ''}pointer';
-    _Logger.log(
-        '  LEAVING createCursorCSSDefinition() MADE CURSOR= "$ret"!!!!');
+
+    if (_Logger.logging)
+      _Logger.log(
+          '  LEAVING createCursorCSSDefinition() MADE CURSOR= "${_debugPrintPossibleCSSDataUriString(ret)}"!!!!');
     return ret;
   }
 
@@ -1259,9 +1359,11 @@ class CustomMouseCursor extends MouseCursor {
 
   /// Disposes of all created cursors.
   static void disposeAll() {
-    _Logger.log('disposeAll() called');
+    if (_Logger.logging) _Logger.log('disposeAll() called');
     for (final cursor in _cursorCacheOfAllCreatedCursors.values) {
-      _Logger.log('Calling dispose on ${cursor.key}');
+      if (_Logger.logging)
+        _Logger.log(
+            'Calling dispose on ${_debugPrintPossibleCSSDataUriString(cursor.key)}');
       cursor.dispose();
     }
     _cursorCacheOfAllCreatedCursors.clear();
@@ -1274,22 +1376,31 @@ class CustomMouseCursor extends MouseCursor {
   /// older CSS url() style cursor defintions (where 1.0x is ASSUMED by the browser).
   /// If the platform is NOT web, or older style URL cursors are not being included in the defintion
   /// ([_useURLDataURICursorCSS] is false) then this method returns immediately.
-  static _createDevicePixelRatio1xVersion(CustomMouseCursor cursor) async {
-    _Logger.log('ENTERING _createDevicePixelRatio1xVersion() entered');
-    assert(cursor._assetBundleImageProvider != null);
+  static Future<void> _createDevicePixelRatio1xVersion(
+      CustomMouseCursor cursor) async {
+    if (_Logger.logging)
+      _Logger.log('ENTERING _createDevicePixelRatio1xVersion() entered');
 
     if (!kIsWeb ||
         !_useURLDataURICursorCSS ||
         cursor._dprBitmapCache.containsKey(1.0)) {
       // this cursor alreay has a 1.0 DPR version present so it is set
-      _Logger.log(
-          '   We found the 1.0X KEY - existing  _createDevicePixelRatio1xVersion()!!!!!');
+      if (_Logger.logging &&
+          cursor._dprBitmapCache.containsKey(1.0)) if (_Logger.logging)
+        _Logger.log(
+            '   We found the 1.0X KEY - existing  _createDevicePixelRatio1xVersion()!!!!!');
+      if (_Logger.logging)
+        _Logger.log(
+            'SHORT CIRCUIT exit _createDevicePixelRatio1xVersion() without having to do anything cursor._dprBitmapCache.containsKey(1.0)=${cursor._dprBitmapCache.containsKey(1.0)} kIsWeb=$kIsWeb  _useURLDataURICursorCSS=$_useURLDataURICursorCSS  ');
       return;
     }
 
     // Because this is the WEB PLATFORM only when we call _updateCursorToNewDpi(1.0)
     // toe ADD the 1.0x cursor image to the existing cursor definition.
-    await cursor._updateCursorToNewDpr(1.0); 
+    await cursor._updateCursorToNewDpr(1.0);
+
+    if (_Logger.logging)
+      _Logger.log('LEAVING _createDevicePixelRatio1xVersion()');
   }
 
   /// This method ensures that all pointers have support for any changes to the devicePixelRatio
@@ -1298,11 +1409,14 @@ class CustomMouseCursor extends MouseCursor {
   /// This is called from our onMetricsChanged() hook or by user themselves (typically from their
   /// root widget's didChangeDependencies() handler.
   static void ensurePointersMatchDevicePixelRatio(BuildContext? context) async {
-    _Logger.log(chalk.color.hotpink('ENTERED ensurePointersMatchDevicePixelRatio()'));
+    if (_Logger.logging)
+      _Logger.log(
+          chalk.color.hotpink('ENTERED ensurePointersMatchDevicePixelRatio()'));
     double devicePixelRatio = _getDevicePixelRatioFromView();
     if (devicePixelRatio == _lastEnsuredDevicePixelRatio) {
-      _Logger.log(
-          chalk.brightBlue('  lastEnsuredDevicePixelRatio IMMEDIATE RETURN already $_lastEnsuredDevicePixelRatio'));
+      if (_Logger.logging)
+        _Logger.log(chalk.brightBlue(
+            '  lastEnsuredDevicePixelRatio IMMEDIATE RETURN already $_lastEnsuredDevicePixelRatio'));
       return;
     }
 
@@ -1312,28 +1426,34 @@ class CustomMouseCursor extends MouseCursor {
     double currentDevicePixelRatio =
         _lastImageConfiguration?.devicePixelRatio ?? devicePixelRatio;
 
-    _Logger.log(
-        '  Determined Current currentDevicePixelRatio= $currentDevicePixelRatio');
-    _Logger.log(
-        '  createLocalImageConfiguration  devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio}  platform=${_lastImageConfiguration!.platform}');
-    _Logger.log('  CHECKING ALL CURSORS');
-    for (final cursor in _cursorCacheOfAllCreatedCursors.values) {
+    if (_Logger.logging)
       _Logger.log(
-          '    Checking DPR for ${cursor.key}  cursor.originStory=${cursor.originStory}');
-      if (cursor.currentCursorDevicePixelRatio != currentDevicePixelRatio) {
+          '  Determined Current currentDevicePixelRatio= $currentDevicePixelRatio');
+    if (_Logger.logging)
+      _Logger.log(
+          '  createLocalImageConfiguration  devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio}  platform=${_lastImageConfiguration!.platform}');
+    if (_Logger.logging) _Logger.log('  CHECKING ALL CURSORS');
+    for (final cursor in _cursorCacheOfAllCreatedCursors.values) {
+      if (_Logger.logging)
         _Logger.log(
-            '    Current DPI is different than cursors DPI!!!    cursor.currentCursorDevicePixelRatio=${cursor.currentCursorDevicePixelRatio} != currentDevicePixelRatio=$currentDevicePixelRatio');
+            '    Checking DPR for ${_debugPrintPossibleCSSDataUriString(cursor.key)}  cursor.originStory=${cursor.originStory}');
+      if (cursor.currentCursorDevicePixelRatio != currentDevicePixelRatio) {
+        if (_Logger.logging)
+          _Logger.log(
+              '    Current DPI is different than cursors DPI!!!    cursor.currentCursorDevicePixelRatio=${cursor.currentCursorDevicePixelRatio} != currentDevicePixelRatio=$currentDevicePixelRatio');
 
-        if(cursor.switchToCachedDevicePixelRatioIfPossible(currentDevicePixelRatio)) {
+        if (cursor.switchToCachedDevicePixelRatioIfPossible(
+            currentDevicePixelRatio)) {
           // found in cache
           continue;
         }
         // not in cache, so go create new cursor bitmap for this DPR
-        await cursor._updateCursorToNewDpr(currentDevicePixelRatio); 
+        await cursor._updateCursorToNewDpr(currentDevicePixelRatio);
       }
     }
     _lastEnsuredDevicePixelRatio = currentDevicePixelRatio;
-    _Logger.log('  LEAVING ensurePointersMatchDevicePixelRatio()!!!!!');
+    if (_Logger.logging)
+      _Logger.log('  LEAVING ensurePointersMatchDevicePixelRatio()!!!!!');
   }
 
   /// Our onMetricsChanged() callback
@@ -1375,48 +1495,73 @@ class CustomMouseCursor extends MouseCursor {
   static bool _noOnMetricsChangedHook = false;
 
   /// This method allows user to specify that they don't want us to hook the onMetricsChanged() - this is
-  /// included because if we hook it then it will conflict with user's hook, so we must provide 
+  /// included because if we hook it then it will conflict with user's hook, so we must provide
   /// way to opt out.  If user opts out they must MANUALLY call `CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context)`.
   static set noOnMetricsChangedHook(bool newVal) {
     if (!_noOnMetricsChangedHook && newVal && _onMetricChangedCallbackSet) {
       throw ('CustomMouseCursor aleady hooked onMetricsChanged() - set noOnDeviceMetricsHook BEFORE creating cursors');
     }
-    _noOnMetricsChangedHook = true;
+    _noOnMetricsChangedHook = newVal;
   }
 
-  static const _usePlatformDipatcherOnMetricsChanged = true;
+  static bool get noOnMetricsChangedHook {
+    return _noOnMetricsChangedHook && !_onMetricChangedCallbackSet;
+  }
+
+  /// If true we use [WidgetsBinding.instance.platformDispatcher.onMetricsChanged] to hook [onMetricsChanged],
+  /// if false we use the [WidgetsBinding.instance.platformDispatcher.views] array and hook the [onMetricsChanged]
+  /// for each view.
+  static bool _usePlatformDipatcherOnMetricsChanged = true;
+
+  /// This method allows user to specify that the want us to use the [WidgetsBinding.instance.platformDispatcher.views]
+  /// array to then hook the [onMetricsChanged] for each view.
+  /// If this is not set to true then the default (pre-multiple views) method of using
+  /// [WidgetsBinding.instance.platformDispatcher.onMetricsChanged] to hook the [onMetricsChanged]
+  static set useViewsForOnMetricsChangedHook(bool newVal) {
+    if (!_usePlatformDipatcherOnMetricsChanged &&
+        newVal &&
+        _onMetricChangedCallbackSet) {
+      throw ('CustomMouseCursor aleady hooked onMetricsChanged() - set useViewsForOnMetricsChangedHook BEFORE creating cursors');
+    }
+    _usePlatformDipatcherOnMetricsChanged = !newVal;
+  }
+
+  static bool get useViewsForOnMetricsChangedHook {
+    return !_usePlatformDipatcherOnMetricsChanged;
+  }
+
   static bool _onMetricChangedCallbackSet = false;
 
   static bool _multiWindowsSetupDetected = false;
   static const bool _usePreFlutter39 = false;
 
-
   /// get current devicePixelRatio from WigetsBinding.instance.window - WARNING deprecated
   /// todo: tmm - this is not multiwindow aware, uses deprecated `window`, but works in stable channel
   static double _getCurrentDevicePixelRatioFromWindow() {
-    if(!kIsWeb && Platform.isMacOS) {
+    if (!kIsWeb && Platform.isMacOS) {
       // macOSX assumes all images are 1.0DPR and then scales them UP accordingly.
       // todo: tmm - fix plugin support to allow sending multiple bitmaps at different DPR and having NSImage hold them all.
-      // for now we just have to deal with pixelated cursors on mac            
+      // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
     return WidgetsBinding.instance.window.devicePixelRatio;
   }
-  /// get current devicePixelRatio from either [_lastImageConfiguration] or from the 
+
+  /// get current devicePixelRatio from either [_lastImageConfiguration] or from the
   /// flutter window instance.
   /// todo: tmm - this is not multiwindow aware, uses deprecated `window`, but works in stable channel
   static double _getCurrentDevicePixelRatioFromLastConfigOrWindow() {
-    if(!kIsWeb && Platform.isMacOS) {
+    if (!kIsWeb && Platform.isMacOS) {
       // macOSX assumes all images are 1.0DPR and then scales them UP accordingly.
       // todo: tmm - fix plugin support to allow sending multiple bitmaps at different DPR and having NSImage hold them all.
-      // for now we just have to deal with pixelated cursors on mac            
+      // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
     return _lastImageConfiguration?.devicePixelRatio ??
-                WidgetsBinding.instance.window.devicePixelRatio;
+        WidgetsBinding.instance.window.devicePixelRatio;
   }
 
-  /// Various ways of getting current DevicePixelRatio - included here are various methods for OLD/New Flutter, 
+  /// Various ways of getting current DevicePixelRatio - included here are various methods for OLD/New Flutter,
   /// some basis for future multi window support.
   static double _getDevicePixelRatioFromView() {
     if (kIsWeb && _useURLDataURICursorCSS && !_useImageSetCSS) {
@@ -1425,10 +1570,10 @@ class CustomMouseCursor extends MouseCursor {
       // without image-set.
       return 1.0;
     }
-    if(!kIsWeb && Platform.isMacOS) {
+    if (!kIsWeb && Platform.isMacOS) {
       // macOSX assumes all images are 1.0DPR and then scales them UP accordingly.
       // todo: tmm - fix plugin support to allow sending multiple bitmaps at different DPR and having NSImage hold them all.
-      // for now we just have to deal with pixelated cursors on mac            
+      // for now we just have to deal with pixelated cursors on mac
       return 1.0;
     }
 
@@ -1443,8 +1588,9 @@ class CustomMouseCursor extends MouseCursor {
       throw ('CustomMouseCursor detected null PlatformDispatcher.instance.implicitView which means Multiple Window Environment _multiWindowsSetupDetected=$_multiWindowsSetupDetected');
     }
 
-    _Logger.log(
-        chalk.color.orange('getDevicePixelRatioFromView() called    :  usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
+    if (_Logger.logging)
+      _Logger.log(chalk.color.orange(
+          'getDevicePixelRatioFromView() called    :  usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
 
     late double devicePixelRatio;
     if (_usePlatformDipatcherOnMetricsChanged) {
@@ -1458,8 +1604,9 @@ class CustomMouseCursor extends MouseCursor {
       // TODO: tmm  Finish multi view/window support once it is implemented in flutter
       double? foundDevicePixelRatio;
       for (final view in WidgetsBinding.instance.platformDispatcher.views) {
-        _Logger.log(
-            'View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
+        if (_Logger.logging)
+          _Logger.log(
+              'View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
         if (foundDevicePixelRatio == null) {
           foundDevicePixelRatio = view.devicePixelRatio;
         } else {
@@ -1474,7 +1621,8 @@ class CustomMouseCursor extends MouseCursor {
       }
       devicePixelRatio = foundDevicePixelRatio;
     }
-    _Logger.log('  RETURNING lastDevicePixelRatio=$devicePixelRatio');
+    if (_Logger.logging)
+      _Logger.log('  RETURNING lastDevicePixelRatio=$devicePixelRatio');
     return devicePixelRatio;
   }
 
@@ -1483,25 +1631,42 @@ class CustomMouseCursor extends MouseCursor {
   static void _setupViewsOnMetricChangedCallbacks() {
     if (!_onMetricChangedCallbackSet && !_noOnMetricsChangedHook) {
       _onMetricChangedCallbackSet = true;
-      _Logger.log(
-          chalk.color.cornflowerblue('setupViewsOnMetricChangedCallbacks() called and BEING SET UP usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
+      if (_Logger.logging)
+        _Logger.log(chalk.color.cornflowerblue(
+            'setupViewsOnMetricChangedCallbacks() called and BEING SET UP usePlatformDipatcherOnMetricsChanged=$_usePlatformDipatcherOnMetricsChanged'));
       if (_usePlatformDipatcherOnMetricsChanged) {
         // Just use platformDispatcher instance
+        final existedBeforeUsOnMetricsChanged =
+            WidgetsBinding.instance.platformDispatcher.onMetricsChanged;
         WidgetsBinding.instance.platformDispatcher.onMetricsChanged = () {
-          _Logger.log(
-              'onMetricsChanged() SINGLE instance.platformDispatcher() version!!!!!');
+          if (_Logger.hookLogging)
+            _Logger.log(
+                'CustomMouseCursor.onMetricsChanged() SINGLE instance.platformDispatcher() version!!!!! existedBeforeUsOnMetricsChanged=$existedBeforeUsOnMetricsChanged');
+          if (existedBeforeUsOnMetricsChanged != null) {
+            existedBeforeUsOnMetricsChanged.call();
+          }
           onMetricsChanged();
         };
       } else {
         // TODO: tmm  properly develop/test this once multiple windows/views is implemented in flutter
         // put the callback on ALL views
+        int viewNum = 0;
         for (final view in WidgetsBinding.instance.platformDispatcher.views) {
+          final existedBeforeUsOnMetricsChanged =
+              view.platformDispatcher.onMetricsChanged;
           view.platformDispatcher.onMetricsChanged = () {
-            _Logger.log('view.platformdispatcher.onMetricsChanged() !!!!!');
-            _Logger.log(
-                'View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
+            if (_Logger.hookLogging)
+              _Logger.log(
+                  'CustomMouseCursor.onMetricsChanged() view[$viewNum].platformdispatcher.onMetricsChanged() !!!!! existedBeforeUsOnMetricsChanged=$existedBeforeUsOnMetricsChanged');
+            if (_Logger.hookLogging)
+              _Logger.log(
+                  'View is DPR ${view.devicePixelRatio}   view.viewId=${view.viewId}');
+            if (existedBeforeUsOnMetricsChanged != null) {
+              existedBeforeUsOnMetricsChanged.call();
+            }
             onMetricsChanged();
           };
+          viewNum++;
         }
       }
     }
@@ -1511,12 +1676,12 @@ class CustomMouseCursor extends MouseCursor {
   static String generateUniqueKey() {
     // md5 seemed overkill, replaced with random key.. //return md5.convert(input).toString();
 
-    // generate a safe/random unique 16 digit id for the cursor 
+    // generate a safe/random unique 16 digit id for the cursor
     // THIS IS A QUICK HACKED version..
     math.Random random = math.Random(DateTime.now().millisecond);
 
     const String hexDigits = "0123456789abcdef";
-    final uuid = List<String>.filled(16,'');
+    final uuid = List<String>.filled(16, '');
 
     for (int i = 0; i < 16; i++) {
       final int hexPos = random.nextInt(16);
@@ -1530,7 +1695,8 @@ class CustomMouseCursor extends MouseCursor {
 
   /// Converts the uiImage to a Uint8List in either BGRA format for windows or to
   /// PNG format for all other platforms.
-  static Future<Uint8List> _getImageBufferInPlatformSpecificFormat(ui.Image uiImage) async {
+  static Future<Uint8List> _getImageBufferInPlatformSpecificFormat(
+      ui.Image uiImage) async {
     if (!kIsWeb && Platform.isWindows) {
       // we need to re-encode as BGRA
       return await _getBytesAsBGRAFromImage(uiImage);
@@ -1664,7 +1830,6 @@ class CustomMouseCursor extends MouseCursor {
     }
     return uiImage;
   }
-
 }
 
 class _CustomMouseCursorSession extends MouseCursorSession {
@@ -1789,12 +1954,12 @@ class _CustomMouseCursorFromIconOriginInfo {
 /// DevicePixelRatio.  This allows us to skip re-loading/creation of bitmaps for
 /// a given DPR when the flutter window moves between different DPR screens.
 /// Instead the system cursor can be regenerated from the cached bitmap data within [imageBuffer].
-/// On the web platform this instead cache's the images generated [base64ImageDataUri]
+/// On the web platform this also caches the image's generated [base64ImageDataUri]
 /// so that it can be re-used when generating web cursors which support additional devicePixelRatios.
 class _CustomMouseCursorDPRBitmapCache {
   const _CustomMouseCursorDPRBitmapCache(this.imageBuffer,
       this.base64ImageDataUri, this.width, this.height, this.hotX, this.hotY);
-  final Uint8List? imageBuffer;
+  final Uint8List imageBuffer;
   final String? base64ImageDataUri;
   final int width;
   final int height;
