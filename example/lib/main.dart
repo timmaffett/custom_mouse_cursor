@@ -16,25 +16,37 @@ class _Logger {
 
 late CustomMouseCursor assetCursor;
 late CustomMouseCursor assetCursorOnly25;
-late CustomMouseCursor assetNative8x;
+late CustomMouseCursor assetCursorNative8x;
 late CustomMouseCursor iconCursor;
 late CustomMouseCursor msIconCursor;
 late CustomMouseCursor assetCursorSingleSize;
 late CustomMouseCursor catUiImageCursor;
+late CustomMouseCursor helloKittyCursorNative8x;
 
+/// Change this to true illustrates the widget calling the CustomMouseCursor DPR handler function
+/// during didChangeDependencies call.
+/// It is included here ONLY for testing that CustomMouseCursor does not interfere with these
+/// events handling methods! (Whether or not CustomMouseCursor.noOnMetricsChangedHook is set to true).
+const illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeDependencies =
+    false;
+const illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeMetricsCallback =
+    false;
+const includeHelloKitty8xExample = false;
 
 Future<void> initializeCursors() async {
-  _Logger.log(chalk.brightRed("initializeCursors() Creating cursors from asset and from icon"));
+  _Logger.log(chalk.brightRed(
+      'initializeCursors() Creating cursors from asset and from icon'));
 
-  CustomMouseCursor.useWebKitImageSet = true; // Optional flag to specify web platform to use `-webkit-image-set` command instead of `image-set` (defaults to true).
+  CustomMouseCursor.useWebKitImageSet =
+      true; // Optional flag to specify web platform to use `-webkit-image-set` command instead of `image-set` (defaults to true).
   //CustomMouseCursor.useOnlyImageSetCSS = true;   // Optional flag to specify web platform to use `image-set()` css commands only. (defaults to false).
   //CustomMouseCursor.useOnlyURLDataURICursorCSS = true;  // Optional flag to specify web platform use only `url()` css commands. (defaults to false).
 
   // Example of image asset that has many device pixel ratio versions (1.5x,2.0x,2.5x,3.0x,3.5x,4.0x,8.0x).
   // The exact size required for most DevicePixelRatio will be able to be loaded directly and used
-  // without scaling. 
+  // without scaling.
   assetCursor = await CustomMouseCursor.asset(
-      "assets/cursors/startrek_mousepointer.png",
+      'assets/cursors/startrek_mousepointer.png',
       hotX: 18,
       hotY: 0);
 
@@ -42,14 +54,14 @@ Future<void> initializeCursors() async {
   // In this case if the devicePixelRatio was 2.0x the 2.5x asset would be loaded and
   // scaled down to 2.0x size.
   assetCursorOnly25 = await CustomMouseCursor.asset(
-      "assets/cursors/startrek_mousepointer25Only.png",
+      'assets/cursors/startrek_mousepointer25Only.png',
       hotX: 18,
       hotY: 0);
 
   // Example of image asset only at 8x native DevicePixelRatio so will get scaled down
   // to most/all encoutered DPR's.
-  assetNative8x = await CustomMouseCursor.exactAsset(
-      "assets/cursors/star-trek-mouse-pointer-cursor292x512.png",
+  assetCursorNative8x = await CustomMouseCursor.exactAsset(
+      'assets/cursors/star-trek-mouse-pointer-cursor292x512.png',
       hotX: 144,
       hotY: 0,
       nativeDevicePixelRatio: 8.0);
@@ -64,11 +76,7 @@ Future<void> initializeCursors() async {
     ),
   ];
   iconCursor = await CustomMouseCursor.icon(Icons.redo,
-      size: 24,
-      hotX: 22,
-      hotY: 17,
-      color: Colors.pinkAccent,
-      shadows: shadows);
+      size: 24, hotX: 22, hotY: 17, color: Colors.pinkAccent, shadows: shadows);
 
   // example of custom cursor created from a icon that is filled, colored blue and
   // added drop shadow.
@@ -84,23 +92,24 @@ Future<void> initializeCursors() async {
   // another exactAsset example where the supplied image asset is a 2.0x image.  This will
   // be scaled down at 1.0x devicePixelRatios and scaled up for >2.0x device pixel ratios.
   assetCursorSingleSize = await CustomMouseCursor.exactAsset(
-      "assets/cursors/example_game_cursor_64x64.png",
+      'assets/cursors/example_game_cursor_64x64.png',
       hotX: 2,
       hotY: 2,
       nativeDevicePixelRatio: 2.0);
 
   // Now this is example of [image] use.  This is intended for more of a 'power user' interface
   // as it is lower level in that it accepts ui.Image objects. (Image from `import 'dart:ui'`).
-  var rawBytes = await rootBundle.load("assets/cursors/cat_cursor4xWithPinkShadow.png"); // 196x272
+  var rawBytes = await rootBundle
+      .load('assets/cursors/cat_cursor4xWithPinkShadow.png'); // 196x272
   var rawUintList = rawBytes.buffer.asUint8List();
   final catCursorUiImage4x = await decodeImageFromList(rawUintList);
-  rawBytes = await rootBundle.load("assets/cursors/cat_cursor2xWithBlueShadow.png"); // 98x136
+  rawBytes = await rootBundle
+      .load('assets/cursors/cat_cursor2xWithBlueShadow.png'); // 98x136
   rawUintList = rawBytes.buffer.asUint8List();
   final ui.Image catCursorUiImage2x = await decodeImageFromList(rawUintList);
   // We create the image cursor with the 4.0x image - this could be the only image needed and all
   // devicePixelRatios will be drived from this image by scaling..
-  catUiImageCursor = await CustomMouseCursor.image(
-      catCursorUiImage4x,
+  catUiImageCursor = await CustomMouseCursor.image(catCursorUiImage4x,
       hotX: 4,
       hotY: 30,
       thisImagesDevicePixelRatio: 4.0,
@@ -111,27 +120,36 @@ Future<void> initializeCursors() async {
   // By looking at the color of the shadow you can tell which cursor image is being used.
   // Experiment with commenting out the following and see that the shadow changes to pink.
   const illustrateUseOfAddtionalImages = false;
-  if(illustrateUseOfAddtionalImages) {
-    await catUiImageCursor.addImage(
-        catCursorUiImage2x,
+  if (illustrateUseOfAddtionalImages) {
+    await catUiImageCursor.addImage(catCursorUiImage2x,
         thisImagesDevicePixelRatio: 2.0);
   }
   await catUiImageCursor.finalizeImages();
+
+  // Example of image asset only at 36pixel 8x native DevicePixelRatio so will always get scaled down
+  helloKittyCursorNative8x = await CustomMouseCursor.exactAsset(
+    'assets/cursors/hello_kitty_cursor_8x.png',
+    hotX: 36,
+    hotY: 162,
+    nativeDevicePixelRatio: 8.0,
+  );
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /* Comment left here to illustrate options.
-    If the user wants to implement custom `onMetricsChanged()` handling there
-    is a mechanism using ` CustomMouseCursor.noOnMetricsChangedHook = true;`.
+  // This is here for testing to verify CustomMouseCursor does not interfere with these callbacks.
+  // (Whether it is handling DPR changes automatically or not).
+  if (illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeDependencies ||
+      illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeMetricsCallback) {
+    CustomMouseCursor.noOnMetricsChangedHook = true;
+    _Logger.log(chalk.color.purple(
+        'Setting ourselves to handle DPR and preventing CustomMouseCursor from hooking onMetricsChanged() event handler'));
+  }
+  CustomMouseCursor.useViewsForOnMetricsChangedHook = true;
 
-  CustomMouseCursor.noOnMetricsChangedHook = true;
-  WidgetsBinding.instance.platformDispatcher.onMetricsChanged = () {
-    // you must call ensurePointersMatchDevicePixelRatio to handle devicePixelRatio changes
-    CustomMouseCursor.ensurePointersMatchDevicePixelRatio(null);
-  };
-  */
+  _Logger.log(
+      'CustomMouseCursor.noOnMetricsChangedHook=${CustomMouseCursor.noOnMetricsChangedHook}   CustomMouseCursor.useViewsForOnMetricsChangedHook=${CustomMouseCursor.useViewsForOnMetricsChangedHook}');
 
   await initializeCursors();
 
@@ -155,44 +173,56 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late double _lastDevicePixelRatio;
 
   /*
-  Illustrate OPTIONAL (power user) use of manual onMetricsChanged handling.
-  Typically THERE IS NO NEED TO DO THIS.
-  THIS can only be used if `CustomMouseCursor.noOnMetricsChangedHook = true;` is defined (SEE ABOVE).
-  Additionally it will only get called if `WidgetsBinding.instance.platformDispatcher.onMetricsChanged`
-  is not hooked with a function above.
-  See for //OPTIONAL_didChangeMetrics_HOOKING// comments and remove those also.
+    Illustrate OPTIONAL (power user) use of manual onMetricsChanged handling.
+    This is included here to verify CustomMouseCursor does not interfere with didChangeMetrics()
+    callbacks.
+  */
   @override
   void didChangeMetrics() {
-    _Logger.log(chalk.brightYellow('WIDGETS didChangeMetrics() callback called!!!!'));
-    setState(() {
-      double prevDPR = _lastDevicePixelRatio;
-      _lastSize = WidgetsBinding.instance.window.physicalSize;
-      _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-      _Logger.log(
-          chalk.yellow('setState() in didChangeMetrics() Window size is $_lastSize  prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
+    _Logger.log(chalk.brightYellow(
+        'WIDGETS didChangeMetrics() callback called!!!!   illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursorsWithDidChangeMetricsCallback=$illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeMetricsCallback'));
+    if (illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeMetricsCallback) {
+      setState(() {
+        double prevDPR = _lastDevicePixelRatio;
+        /* deprecated way
+        _lastSize = WidgetsBinding.instance.window.physicalSize;
+        _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
+        */
+        _lastSize = WidgetsBinding
+            .instance.platformDispatcher.implicitView!.physicalSize;
+        _lastDevicePixelRatio = WidgetsBinding
+            .instance.platformDispatcher.implicitView!.devicePixelRatio;
+        _Logger.log(chalk.yellow(
+            '  setState() in didChangeMetrics() Window size is $_lastSize  prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
+        _Logger.log(chalk.color.orange(
+            '    calling ensurePointersMatchDevicePixelRatio(context)'));
 
-      CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
-    });
+        CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
+      });
+    }
   }
-  */
-
-  /// Change this to true illustrates the widget calling the CustomMouseCursor DPR handler function
-  /// during didChangeDependencies call.
-  static const illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursors = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _Logger.log(chalk.yellow('WIDGETS didChangeDependencies() callback called!!!!'));
+    _Logger.log(chalk.yellow(
+        'WIDGETS didChangeDependencies() callback called - illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursors=$illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeDependencies!!!!'));
 
     // illustrate completely optional manual handling of DPR changes for CustomMouseCursor.
-    if(illustrateManualHandlingOfDevicePixelRatioChangesForCustomCursors) {
+    if (illustrateManualHandlingOfDPRChangesForCursorsWithDidChangeDependencies) {
       double prevDPR = _lastDevicePixelRatio;
+      /* deprecated way
       _lastSize = WidgetsBinding.instance.window.physicalSize;
       _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
-      _Logger.log(
-          chalk.yellow('in didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
-
+      */
+      _lastSize =
+          WidgetsBinding.instance.platformDispatcher.implicitView!.physicalSize;
+      _lastDevicePixelRatio = WidgetsBinding
+          .instance.platformDispatcher.implicitView!.devicePixelRatio;
+      _Logger.log(chalk.yellow(
+          '  didChangeDependencies() Window size is $_lastSize   prevDPR=$prevDPR  new DevicePixelRatio=$_lastDevicePixelRatio'));
+      _Logger.log(chalk.color
+          .orange('    calling ensurePointersMatchDevicePixelRatio(context)'));
       CustomMouseCursor.ensurePointersMatchDevicePixelRatio(context);
     }
   }
@@ -210,16 +240,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _Logger.log(chalk.brightRed('MyApp initState() called'));
     super.initState();
 
+    /* deprecated way
     _lastSize = WidgetsBinding.instance.window.physicalSize;
     _lastDevicePixelRatio = WidgetsBinding.instance.window.devicePixelRatio;
+    */
+    _lastSize =
+        WidgetsBinding.instance.platformDispatcher.implicitView!.physicalSize;
+    _lastDevicePixelRatio = WidgetsBinding
+        .instance.platformDispatcher.implicitView!.devicePixelRatio;
 
-    _Logger.log(
-        chalk.red('Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
+    _Logger.log(chalk.red(
+        'Window size is $_lastSize    _lastDevicePixelRatio=$_lastDevicePixelRatio'));
 
-    //OPTIONAL_didChangeMetrics_HOOKING//WidgetsBinding.instance.addObserver(this);
-
-    // call once in the initState() to 
-    //CustomMouseCursor.ensurePointersMatchDevicePixelRatio(null);
+    // included only to verify that CustomMouseCursor does not interfere with this.
+    WidgetsBinding.instance.addObserver(this);
 
     // Initialise a controller. It will contains signature points, stroke width and pen color.
     // It will allow you to interact with the widget
@@ -242,7 +276,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     super.dispose();
 
-    //OPTIONAL_didChangeMetrics_HOOKING//WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     _signatureController.dispose();
     CustomMouseCursor.disposeAll();
@@ -256,8 +290,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           title: RichText(
             text: TextSpan(
               text: 'CustomMouseCursor Example and Interactive Test App',
-              style:
-                  const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
               children: const <TextSpan>[
                 TextSpan(
                     text:
@@ -278,7 +311,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   '(with 1.0x,1.5x,2.0x,2.5x,3.0x,3.5x,4.0x, and 8.0x assets present)',
               note2: '(should appear as tall as this row)',
               details:
-                  'CustomMouseCursor.asset("assets/cursors/startrek_mousepointer.png", hotX:18, hotY:0)',
+                  "CustomMouseCursor.asset('assets/cursors/startrek_mousepointer.png', hotX:18, hotY:0)",
               color: Colors.indigoAccent,
               selectCursorCallback: selectCursorCallback,
             ),
@@ -288,17 +321,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               note:
                   '(only 1.0x and 2.5x assets present) (should be identical to above)',
               details:
-                  'CustomMouseCursor.asset("assets/cursors/startrek_mousepointer25Only.png", hotX:18, hotY:0)',
+                  "CustomMouseCursor.asset('assets/cursors/startrek_mousepointer25Only.png', hotX:18, hotY:0)",
               color: Colors.blue,
               selectCursorCallback: selectCursorCallback,
             ),
             CursorTesterSelectorRegion(
-              assetNative8x,
+              assetCursorNative8x,
               message: 'Click to Select 8x DPR ExactAsset Cursor',
               note:
                   '(single 8.0x exactAsset specified) (should be identical to above)',
               details:
-                  'CustomMouseCursor.exactAsset("assets/cursors/star-trek-mouse-pointer-cursor292x512.png", hotX: 144, hotY: 0, nativeDevicePixelRatio: 8.0);',
+                  "CustomMouseCursor.exactAsset('assets/cursors/star-trek-mouse-pointer-cursor292x512.png', hotX: 144, hotY: 0, nativeDevicePixelRatio: 8.0);",
               color: const ui.Color.fromARGB(255, 26, 133, 172),
               selectCursorCallback: selectCursorCallback,
             ),
@@ -324,7 +357,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               message: 'Click to Select ExactAsset Cursor',
               note: '(DPR 2.0 asset/hotspot coords)',
               details:
-                  'CustomMouseCursor.exactAsset("assets/cursors/example_game_cursor_64x64.png",  hotX: 2, hotY: 2, nativeDevicePixelRatio: 2.0)',
+                  "CustomMouseCursor.exactAsset('assets/cursors/example_game_cursor_64x64.png',  hotX: 2, hotY: 2, nativeDevicePixelRatio: 2.0)",
               color: Colors.orange,
               selectCursorCallback: selectCursorCallback,
             ),
@@ -337,6 +370,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               color: Colors.redAccent,
               selectCursorCallback: selectCursorCallback,
             ),
+            if (includeHelloKitty8xExample)
+              CursorTesterSelectorRegion(
+                helloKittyCursorNative8x,
+                message: 'Click to Exact Asset 8x cursor',
+                note:
+                    '(created with a single asset at DPR 8.0x scaling to 36 logical pixels)',
+                details:
+                    "CustomMouseCursor.image( 'assets/cursors/hello_kitty_camera_cursor_8x.png', hotX: 36, hotY: 162, nativeDevicePixelRatio: 8.0)",
+                color: ui.Color.fromARGB(255, 255, 13, 13),
+                selectCursorCallback: selectCursorCallback,
+              ),
             MouseRegion(
               cursor: currentDrawCursor != null
                   ? currentDrawCursor!
@@ -344,7 +388,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(  // todo: const  but Not on stable channel  
+                    Row(
+                        // todo: const  but Not on stable channel
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(
