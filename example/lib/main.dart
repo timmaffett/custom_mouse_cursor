@@ -149,7 +149,6 @@ void main() async {
   // following is for future flutter multiwindow support
   //CustomMouseCursor.useViewsForOnMetricsChangedHook = false;   // if true it loops over new views array which can support multiple windows
 
-
   _Logger.log(
       'CustomMouseCursor.noOnMetricsChangedHook=${CustomMouseCursor.noOnMetricsChangedHook}   CustomMouseCursor.useViewsForOnMetricsChangedHook=${CustomMouseCursor.useViewsForOnMetricsChangedHook}');
 
