@@ -1,6 +1,6 @@
 name: custom_mouse_cursor
 description: Custom mouse cursors for Flutter which are devicePixelRatio aware.
-version: 1.0.3
+version: 1.1.0
 homepage: https://github.com/timmaffett/custom_mouse_cursor
 screenshots:
   - description: 'Example program illustrating use of CustomMouseCursor cursors.'

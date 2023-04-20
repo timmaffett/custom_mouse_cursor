@@ -146,7 +146,9 @@ void main() async {
     _Logger.log(chalk.color.purple(
         'Setting ourselves to handle DPR and preventing CustomMouseCursor from hooking onMetricsChanged() event handler'));
   }
-  CustomMouseCursor.useViewsForOnMetricsChangedHook = true;
+  // following is for future flutter multiwindow support
+  //CustomMouseCursor.useViewsForOnMetricsChangedHook = false;   // if true it loops over new views array which can support multiple windows
+
 
   _Logger.log(
       'CustomMouseCursor.noOnMetricsChangedHook=${CustomMouseCursor.noOnMetricsChangedHook}   CustomMouseCursor.useViewsForOnMetricsChangedHook=${CustomMouseCursor.useViewsForOnMetricsChangedHook}');
@@ -459,14 +461,14 @@ class CursorTesterSelectorRegion extends StatelessWidget {
                     if (note != null)
                       Text(note!,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 10,
                             fontStyle: FontStyle.italic,
                           )),
                     if (note2 != null) const SizedBox(width: 10),
                     if (note2 != null)
                       Text(note2!,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           )),
                   ]),

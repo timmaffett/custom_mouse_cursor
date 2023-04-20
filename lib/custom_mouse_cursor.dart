@@ -378,7 +378,7 @@ class CustomMouseCursor extends MouseCursor {
         rescaleRatioRequiredForImage =
             _lastImageConfiguration!.devicePixelRatio! / nativeDevicePixelRatio;
         if (_Logger.logging)
-          _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
+          _Logger.log('  ASSETAWAREKEY SCALE==1.0 SPECIAL CASE  nativeDevicePixelRatio=$nativeDevicePixelRatio  exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
         if (_Logger.logging)
           _Logger.log(
               '  $nativeDevicePixelRatio was PASSED for native - but then _lastImageConfiguration!.devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio} and assetAwareKey.scale=${assetAwareKey.scale}');
@@ -410,7 +410,7 @@ class CustomMouseCursor extends MouseCursor {
         }
         if (_Logger.logging)
           _Logger.log(
-              '  UPDATED values DPR=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY   exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
+              '  UPDATED values DPR nativeDevicePixelRatio=$nativeDevicePixelRatio hotX=$hotX hotY=$hotY   exactAssetDevicePixelRatio=$exactAssetDevicePixelRatio');
       }
       //
       assetName = assetAwareKey.name;
@@ -476,7 +476,7 @@ class CustomMouseCursor extends MouseCursor {
 
     if (_Logger.logging)
       _Logger.log(chalk.brightGreen(
-          'ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio ) '));
+          'ENTERING _updateAssetToNewDpi( newDevicePixelRatio=$newDevicePixelRatio )   nativeDevicePixelRatio=$nativeDevicePixelRatio _exactAssetDevicePixelRatio=$_exactAssetDevicePixelRatio'));
 
     bool useExactAssetImage =
         (originStory == _CustomMouseCursorCreationType.exactasset);
@@ -498,7 +498,7 @@ class CustomMouseCursor extends MouseCursor {
           '  assetAwareKey was obtainKey`ed() to be ${assetAwareKey.name} scale=${assetAwareKey.scale}');
 
     if (useExactAssetImage &&
-        nativeDevicePixelRatio != 1.0 &&
+        _exactAssetDevicePixelRatio != 1.0 &&
         assetAwareKey.scale == 1.0) {
       // During EXACTASSET were told that the 1.0 is actually [nativeDevicePixelRatio] SO USE THAT
       //  (ExactImageAsset() will always return scale of 1.0)  - so we must use the pixel
@@ -506,7 +506,7 @@ class CustomMouseCursor extends MouseCursor {
       rescaleRatioRequiredForImage =
           newDevicePixelRatio / _exactAssetDevicePixelRatio!;
       if (_Logger.logging)
-        _Logger.log('  ASSETAWAREKET SCALE==1.0 SPECIAL CASE');
+        _Logger.log('  ASSETAWAREKEY SCALE==1.0 SPECIAL CASE  _exactAssetDevicePixelRatio=$_exactAssetDevicePixelRatio');
       if (_Logger.logging)
         _Logger.log(
             '  newDevicePixelRatio=$newDevicePixelRatio (orginally we were told nativeDevicePixelRatio=$nativeDevicePixelRatio) was PASSED for native - but then newDevicePixelRatio=$newDevicePixelRatio and assetAwareKey.scale=${assetAwareKey.scale}');
@@ -1431,11 +1431,11 @@ class CustomMouseCursor extends MouseCursor {
     if (_Logger.logging)
       _Logger.log(
           '  createLocalImageConfiguration  devicePixelRatio=${_lastImageConfiguration!.devicePixelRatio}  platform=${_lastImageConfiguration!.platform}');
-    if (_Logger.logging) _Logger.log('  CHECKING ALL CURSORS');
+    if (_Logger.logging) _Logger.log('\n\n  CHECKING ALL CURSORS==============================================');
     for (final cursor in _cursorCacheOfAllCreatedCursors.values) {
       if (_Logger.logging)
         _Logger.log(
-            '    Checking DPR for ${_debugPrintPossibleCSSDataUriString(cursor.key)}  cursor.originStory=${cursor.originStory}');
+            '\n--------------------------------------------------------\n    Checking DPR for cursor.originStory=${cursor.originStory}  key=${_debugPrintPossibleCSSDataUriString(cursor.key)}  ');
       if (cursor.currentCursorDevicePixelRatio != currentDevicePixelRatio) {
         if (_Logger.logging)
           _Logger.log(
@@ -1713,7 +1713,10 @@ class CustomMouseCursor extends MouseCursor {
     } else {
       // on all other platforms we ENSURE the image buffer is PNG by re-encoding
       final byteData = await uiImage.toByteData(format: ui.ImageByteFormat.png);
-      return byteData!.buffer.asUint8List();
+      if(byteData==null) {
+        throw('Error converting ui.Image $uiImage to PNG format using .toByteData() ${kIsWeb?'- Known error when using HTML web renderer - Use canvaskit':''}');
+      }
+      return byteData.buffer.asUint8List();
     }
   }
 

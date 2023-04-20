@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Fix exactAsset dpr 1->2 bug
+
 ## 1.0.3
 
 * Fix onMetricsChange() callback to chain to previous set callback.
