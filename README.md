@@ -20,8 +20,6 @@ They are trivial to create from any flutter icon or from image assets.
 
 The [live example](https://timmaffett.github.io/custom_mouse_cursor/) was been compiled with a local version of the engine with [PR#41186](https://github.com/flutter/engine/pull/41186).
 
-
-
 <img src="https://raw.githubusercontent.com/timmaffett/custom_mouse_cursor/master/media/example_app_windowcapture_01.png" width="100%">
 
 CustomMouseCursor's can be created directly from any flutter image asset as well as flutter icons (just as you would with Flutter Icon).
@@ -31,12 +29,11 @@ CustomMouseCursors are very performant.  All work is cached so switching between
 
 The custom mouse cursors will be automatically adjusted for the system's devicePixelRatio and when moving the flutter window between monitors with varying devicePixelRatios.
 
-###Note
+### Note
 
 Currently the flutter master channel is required for windows support. (Window's support is not possible without [changes to the flutter engine](https://github.com/flutter/engine/pull/36143) that are included within the master channel.)
 
 This package provides platform plugins that provide support for macos and limux platforms on both the stable and master flutter channels.
-
 
 I have submitted [flutter engine PR#41186](https://github.com/flutter/engine/pull/41186) that provides support for the web platform.  With luck that PR will land in the master channel soon.
 
@@ -44,16 +41,17 @@ I have submitted [flutter engine PR#41186](https://github.com/flutter/engine/pul
 
 - [x] macOS (works with current flutter `stable` channel or `master`)
 - [x] Linux (works with current flutter `stable` channel or `master`)
-- [x] Windows (requires the flutter `master` channel)*
+- [x] Windows (works with current flutter `stable` channel or `master`)
 - [x] Web (requires flutter engine [PR#41186](https://github.com/flutter/engine/pull/41186), hopefully `master` channel soon)*
 
-* As of 4/9/23 Windows support requires the master channel (until [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) lands in stable).
-* As of 4/9/23 Web support requires custom engine with [flutter engine PR#41186](https://github.com/flutter/engine/pull/41186) lands in the master channel.
+* ~~As of 4/9/23 Windows support requires the master channel (until [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) lands in stable).~~ Windows support is now available on all channels.
+
+* As of 5/27/24 Web support requires custom engine with [flutter engine PR#41186](https://github.com/flutter/engine/pull/41186) lands in the master channel.  [Unfortunately I have not had time to address change requests for this PR and it is still lingering.  File an issue on github for this repo if you really need web support and it will motivate me to spend the time required to address this.]
 
 This package could not exist without the work of @Kingtous's [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) allowing proper windows support and @imiskolee's github for original the [Windows, Mac and linux support](https://github.com/imiskolee/flutter_custom_cursor).
 
 
-Note: Currently, the api required by this plugin on Windows is included in flutter `master` branch. It means that u need to use this plugin with flutter master branch on Windows platform. See [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) for details.
+~~Note: Currently, the api required by this plugin on Windows is included in flutter `master` branch. It means that u need to use this plugin with flutter master branch on Windows platform. See [flutter engine PR#36143](https://github.com/flutter/engine/pull/36143) for details.~~ Windows support is now available on all channels.
 
 ## Example use
 Each example shows excerpt from example app with the the cursor the example code created showing on the left side of the image.
