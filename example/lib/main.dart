@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:material_symbols_icons/sharp.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:signature/signature.dart';
 import 'package:chalkdart/chalk.dart';
 
@@ -81,7 +81,7 @@ Future<void> initializeCursors() async {
   // example of custom cursor created from a icon that is filled, colored blue and
   // added drop shadow.
   msIconCursor = await CustomMouseCursor.icon(
-      MaterialSymbols.arrow_selector_tool,
+      Symbols.arrow_selector_tool_sharp,
       size: 32,
       hotX: 8,
       hotY: 2,

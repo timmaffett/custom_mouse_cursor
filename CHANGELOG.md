@@ -1,6 +1,17 @@
 
 # Changelog for custom_mouse_cursor package
 
+## 1.1.3
+
+* Update chalkdart version for pubspec.yaml
+* Style clean up `if(_Logger.logging)` checks to use open/close blocks `if(_Logger.logging){}`
+* Update mouse_tracker_test_utils.dart to new flutter api
+* Updated example to MaterialSymbolsIcons `Symbols` class instead of deprecated MaterialSymbolsSharp
+
+## 1.1.2
+
+* Update README.md
+
 ## 1.1.1
 
 * Fix generateUniqueKey() to use DateTime.now().microsecond as random seed instead of millisecond and keep
