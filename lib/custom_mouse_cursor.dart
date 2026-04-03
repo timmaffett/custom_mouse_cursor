@@ -1388,14 +1388,19 @@ class CustomMouseCursor extends MouseCursor {
     if (_Logger.logging) {
       _Logger.log('disposeAll() called');
     }
-    for (final cursor in _cursorCacheOfAllCreatedCursors.values) {
+    // Take a snapshot before iterating — dispose() calls remove() on the same
+    // map, so iterating .values directly throws ConcurrentModificationError.
+    final all = _cursorCacheOfAllCreatedCursors.values.toList();
+    _cursorCacheOfAllCreatedCursors.clear();
+    for (final cursor in all) {
       if (_Logger.logging) {
         _Logger.log(
             'Calling dispose on ${_debugPrintPossibleCSSDataUriString(cursor.key)}');
       }
-      cursor.dispose();
+      if (!kIsWeb) {
+        _CustomMouseCursorPlatformInterface.deleteCursor(cursor.key);
+      }
     }
-    _cursorCacheOfAllCreatedCursors.clear();
   }
 
   static ImageConfiguration? _lastImageConfiguration;
